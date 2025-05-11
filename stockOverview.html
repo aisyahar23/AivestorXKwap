@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinanceAI - AAPL Analysis Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --dark-blue: #0f172a;
+            --blue: #1e3a8a;
+            --light-blue: #172554;
+            --highlight: #3b82f6;
+        }
+        
+        body {
+            background-color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .dashboard-container {
+            background-color: #f1f5f9;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .main-header {
+            background-color: white;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 16px;
+            padding: 16px;
+        }
+        
+        .span-12 { grid-column: span 12; }
+        .span-8 { grid-column: span 8; }
+        .span-6 { grid-column: span 6; }
+        .span-4 { grid-column: span 4; }
+        
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            height: 100%;
+        }
+        
+        .tradingview-widget-container {
+            border: none !important;
+            background: transparent !important;
+            height: 100%;
+            width: 100%;
+        }
+        
+        .tradingview-widget-copyright {
+            display: none !important;
+        }
+        
+        .tradingview-widget-container__widget {
+            background: transparent !important;
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+        }
+        
+        .header-stats-card {
+            border-left: 4px solid var(--highlight);
+        }
+        
+        .ai-insights {
+            border-top: 4px solid var(--highlight);
+        }
+        
+        .badge-up {
+            background-color: #10b981;
+        }
+        
+        .badge-down {
+            background-color: #ef4444;
+        }
+        
+        .chart-container {
+            height: 600px;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        .metric-card {
+            background-color: #f8fafc;
+            padding: 16px;
+            border-radius: 12px;
+            transition: transform 0.2s;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .metric-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        
+        .metric-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        .metric-sub {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+        
+        .ai-badge {
+            background-color: var(--blue);
+            color: white;
+            padding: 0.15rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .header-container {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+            padding: 20px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        @media (max-width: 1024px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="dashboard-container">
+        <!-- Top header -->
+        <header class="main-header flex justify-between items-center p-4">
+            <div class="flex items-center">
+                <span class="text-2xl font-bold mr-8">Finance<span class="text-blue-500">AI</span></span>
+                <div class="relative">
+                    <input type="text" placeholder="Search for stocks..." class="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                </div>
+            </div>
+            
+            <div class="flex items-center">
+                <div class="relative mr-4">
+                    <i class="fas fa-bell text-gray-500"></i>
+                    <span class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">3</span>
+                </div>
+                <div class="flex items-center">
+                    <img src="/api/placeholder/40/40" class="h-8 w-8 rounded-full mr-2" alt="Profile">
+                    <span class="font-medium text-gray-700">John Doe</span>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main content area -->
+        <main class="p-4">
+            <!-- Header with buttons -->
+            <div class="header-container">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">AAPL</h1>
+                    <p class="text-sm text-gray-500">Apple Inc. - NASDAQ</p>
+                </div>
+                <div class="flex space-x-2">
+                    <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center">
+                        <i class="fas fa-star mr-2 text-yellow-500"></i>
+                        Watchlist
+                    </button>
+                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center">
+                        <i class="fas fa-plus mr-2"></i>
+                        Add to Portfolio
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Metrics Grid -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Market Cap</div>
+                    <div class="metric-value">$2.83T</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">52W Range</div>
+                    <div class="metric-value">$145.07 - $188.52</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">P/E Ratio</div>
+                    <div class="metric-value">30.14</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Dividend Yield</div>
+                    <div class="metric-value">0.54%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Volume</div>
+                    <div class="metric-value">48.92M</div>
+                    <div class="metric-sub">Avg: 57.43M</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Open</div>
+                    <div class="metric-value">$180.95</div>
+                    <div class="metric-sub">Prev Close: $179.91</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Day Range</div>
+                    <div class="metric-value">$180.20 - $183.07</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">AI Forecast (30d)</div>
+                    <div class="metric-value text-blue-600">$192.50</div>
+                    <div class="metric-sub">Updated: May 11, 2025</div>
+                </div>
+            </div>
+            
+            <!-- Bento Grid Layout -->
+            <div class="bento-grid">
+                <!-- Main Chart - Full Width -->
+                <div class="card span-12 chart-container">
+                    <div class="flex justify-between items-center p-4">
+                        <div class="flex items-center">
+                            <h3 class="font-bold text-lg">Price Chart</h3>
+                            <div class="ml-4 flex bg-gray-100 rounded-lg overflow-hidden">
+                                <button class="px-3 py-1 text-sm bg-blue-600 text-white">1D</button>
+                                <button class="px-3 py-1 text-sm text-gray-700">1W</button>
+                                <button class="px-3 py-1 text-sm text-gray-700">1M</button>
+                                <button class="px-3 py-1 text-sm text-gray-700">3M</button>
+                                <button class="px-3 py-1 text-sm text-gray-700">1Y</button>
+                                <button class="px-3 py-1 text-sm text-gray-700">5Y</button>
+                                <button class="px-3 py-1 text-sm text-gray-700">ALL</button>
+                            </div>
+                        </div>
+                        <div>
+                            <select class="py-1 px-3 border border-gray-300 rounded-lg text-sm">
+                                <option>Candlestick</option>
+                                <option>Line</option>
+                                <option>OHLC</option>
+                                <option>Area</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="main-chart" class="tradingview-widget-container h-full">
+                        <div class="tradingview-widget-container__widget h-full"></div>
+                    </div>
+                </div>
+                
+                <!-- AI Insights -->
+                <div class="card span-4 p-5 ai-insights">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-lg">AI Insights</h3>
+                        <span class="text-xs text-gray-500">Updated 2 hrs ago</span>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex items-center mb-1">
+                                <div class="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
+                                <h4 class="font-medium">Sentiment Analysis</h4>
+                            </div>
+                            <p class="text-sm text-gray-600">Bullish sentiment detected in recent earnings call transcripts and press releases.</p>
+                        </div>
+                        
+                        <div>
+                            <div class="flex items-center mb-1">
+                                <div class="h-2 w-2 rounded-full bg-blue-500 mr-2"></div>
+                                <h4 class="font-medium">Technical Indicators</h4>
+                            </div>
+                            <p class="text-sm text-gray-600">12 of 15 technical indicators signal a strong buy position in the short term.</p>
+                        </div>
+                        
+                        <div>
+                            <div class="flex items-center mb-1">
+                                <div class="h-2 w-2 rounded-full bg-yellow-500 mr-2"></div>
+                                <h4 class="font-medium">Risk Assessment</h4>
+                            </div>
+                            <p class="text-sm text-gray-600">Moderate volatility expected with upcoming product announcements.</p>
+                        </div>
+                        
+                        <div>
+                            <div class="flex items-center mb-1">
+                                <div class="h-2 w-2 rounded-full bg-purple-500 mr-2"></div>
+                                <h4 class="font-medium">AI Prediction</h4>
+                            </div>
+                            <p class="text-sm text-gray-600">Our models predict a 76% probability of price increase over next 30 days.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <button class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center justify-center">
+                            <i class="fas fa-file-pdf mr-2"></i>
+                            Download Full Report
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Mini Chart 1 -->
+                <div class="card span-4 p-4">
+                    <h3 class="font-bold text-lg mb-3">Moving Averages</h3>
+                    <!-- Market Indicators -->
+        
+                    <h3 class="font-bold text-lg mb-4">Market Indicators</h3>
+                    <div class="space-y-10">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium">Relative Strength</span>
+                                <span class="text-sm font-bold">75/100</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium">Market Sentiment</span>
+                                <span class="text-sm font-bold">82/100</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: 82%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium">Volatility</span>
+                                <span class="text-sm font-bold">34/100</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-yellow-500 h-2 rounded-full" style="width: 34%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium">Earnings Surprises</span>
+                                <span class="text-sm font-bold">89/100</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-purple-500 h-2 rounded-full" style="width: 89%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium">Insider Activity</span>
+                                <span class="text-sm font-bold">62/100</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-400 h-2 rounded-full" style="width: 62%"></div>
+                            </div>
+                        </div>
+                    </div>
+              
+                    
+                </div>
+                
+                <!-- Mini Chart 2 -->
+                <div class="card span-4 p-4">
+                    <h3 class="font-bold text-lg mb-3">Relative Strength Index</h3>
+                    <div class="tradingview-widget-container h-full" style="min-height: 330px;">
+                       
+                    </div>
+                </div>
+                
+                <!-- Market Indicators -->
+                <div class="card span-6 p-8">
+                    <h3 class="font-bold text-lg mb-4">Market Indicators</h3>
+                    <div class="space-y-10">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium">Relative Strength</span>
+                                <span class="text-sm font-bold">75/100</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium">Market Sentiment</span>
+                                <span class="text-sm font-bold">82/100</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: 82%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium">Volatility</span>
+                                <span class="text-sm font-bold">34/100</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-yellow-500 h-2 rounded-full" style="width: 34%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium">Earnings Surprises</span>
+                                <span class="text-sm font-bold">89/100</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-purple-500 h-2 rounded-full" style="width: 89%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium">Insider Activity</span>
+                                <span class="text-sm font-bold">62/100</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-400 h-2 rounded-full" style="width: 62%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Trading Volume -->
+                <div class="card span-6 p-5">
+                    <div class="tradingview-widget-container h-full" style="min-height: 260px;">
+                        <div class="tradingview-widget-container__widget h-full"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Main chart script -->
+    <script>
+        // Create and configure the main chart widget
+        const mainChartScript = document.createElement('script');
+        mainChartScript.type = 'text/javascript';
+        mainChartScript.async = true;
+        mainChartScript.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+        mainChartScript.innerHTML = JSON.stringify({
+            "width": "100%",
+            "height": "100%",
+            "symbol": "NASDAQ:AAPL",
+            "interval": "D",
+            "timezone": "Etc/UTC",
+            "theme": "light",
+            "style": "1",
+            "locale": "en",
+            "enable_publishing": false,
+            "allow_symbol_change": true,
+            "calendar": false,
+            "support_host": "https://www.tradingview.com"
+        });
+        document.getElementById('main-chart').appendChild(mainChartScript);
+        
+        // Create mini chart 1 - Moving Averages
+        const maChartScript = document.createElement('script');
+        maChartScript.type = 'text/javascript';
+        maChartScript.async = true;
+        maChartScript.src = "https://s3.tradingview.com/external-embedding/embed-widget-mini-chart.js";
+        maChartScript.innerHTML = JSON.stringify({
+            "symbol": "NASDAQ:AAPL",
+            "width": "100%",
+            "height": "100%",
+            "locale": "en",
+            "dateRange": "12M",
+            "colorTheme": "light",
+            "trendLineColor": "#37a6ef",
+            "underLineColor": "rgba(55, 166, 239, 0.15)",
+            "isTransparent": false,
+            "autosize": true,
+            "largeChartUrl": ""
+        });
+        document.querySelectorAll('.tradingview-widget-container')[2].appendChild(maChartScript);
+        
+        // Create mini chart 2 - RSI
+        const rsiChartScript = document.createElement('script');
+        rsiChartScript.type = 'text/javascript';
+        rsiChartScript.async = true;
+        rsiChartScript.src = "https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js";
+        rsiChartScript.innerHTML = JSON.stringify({
+            "interval": "1D",
+            "width": "100%",
+            "isTransparent": false,
+            "height": "100%",
+            "symbol": "NASDAQ:AAPL",
+            "showIntervalTabs": true,
+            "displayMode": "single",
+            "locale": "en",
+            "colorTheme": "light"
+        });
+        document.querySelectorAll('.tradingview-widget-container')[3].appendChild(rsiChartScript);
+        
+        // Create volume chart
+        const volumeChartScript = document.createElement('script');
+        volumeChartScript.type = 'text/javascript';
+        volumeChartScript.async = true;
+        volumeChartScript.src = "https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js";
+        volumeChartScript.innerHTML = JSON.stringify({
+            "symbols": [
+                ["NASDAQ:AAPL|1D"]
+            ],
+            "chartOnly": false,
+            "width": "100%",
+            "height": "100%",
+            "locale": "en",
+            "colorTheme": "light",
+            "autosize": true,
+            "showVolume": true,
+            "showMA": false,
+            "hideDateRanges": false,
+            "hideMarketStatus": false,
+            "hideSymbolLogo": false,
+            "scalePosition": "right",
+            "scaleMode": "Normal",
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif",
+            "fontSize": "10",
+            "noTimeScale": false,
+            "valuesTracking": "1",
+            "changeMode": "price-and-percent",
+            "chartType": "area",
+            "maLineColor": "#2962FF",
+            "maLineWidth": 1,
+            "maLength": 9
+        });
+        document.querySelectorAll('.tradingview-widget-container')[4].appendChild(volumeChartScript);
+        
+        // Error handling
+        window.addEventListener('error', function(e) {
+            if (e.target.tagName === 'SCRIPT') {
+                console.warn('TradingView widget failed to load:', e.target.src);
+                const widgetContainer = e.target.closest('.tradingview-widget-container');
+                if (widgetContainer) {
+                    widgetContainer.innerHTML = `
+                        <div class="p-4 text-center">
+                            <p>Widget temporarily unavailable. Please refresh the page.</p>
+                        </div>
+                    `;
+                }
+            }
+        }, true);
+    </script>
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Under Maintenance</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #343a40;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .maintenance-container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 650px;
+            z-index: 100;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #0066cc;
+        }
+
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            color: #495057;
+        }
+
+        .gear-container {
+            margin: 2rem 0;
+            height: 100px;
+            position: relative;
+        }
+
+        .gear {
+            position: absolute;
+            border-radius: 50%;
+            background: #0066cc;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .gear-large {
+            width: 70px;
+            height: 70px;
+            animation: rotate 10s linear infinite;
+        }
+
+        .gear-medium {
+            width: 50px;
+            height: 50px;
+            left: calc(50% - 60px);
+            background: #2d8cf0;
+            animation: rotate 8s linear infinite reverse;
+        }
+
+        .gear-small {
+            width: 35px;
+            height: 35px;
+            left: calc(50% + 60px);
+            background: #73c0ff;
+            animation: rotate 6s linear infinite;
+        }
+
+        .gear::before {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #f8f9fa;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .gear::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: inherit;
+            border-radius: inherit;
+        }
+
+        .teeth {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: inherit;
+            top: -10px;
+            left: calc(50% - 10px);
+        }
+
+        .teeth:nth-child(2) {
+            transform: rotate(45deg);
+        }
+        
+        .teeth:nth-child(3) {
+            transform: rotate(90deg);
+        }
+        
+        .teeth:nth-child(4) {
+            transform: rotate(135deg);
+        }
+        
+        .teeth:nth-child(5) {
+            transform: rotate(180deg);
+        }
+        
+        .teeth:nth-child(6) {
+            transform: rotate(225deg);
+        }
+        
+        .teeth:nth-child(7) {
+            transform: rotate(270deg);
+        }
+        
+        .teeth:nth-child(8) {
+            transform: rotate(315deg);
+        }
+
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.2;
+        }
+
+        @keyframes rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-15px) translateX(15px); }
+            50% { transform: translateY(0) translateX(30px); }
+            75% { transform: translateY(15px) translateX(15px); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background-color: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 2rem;
+        }
+
+        .progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #0066cc, #73c0ff);
+            animation: load 3s ease-in-out infinite;
+        }
+
+        @keyframes load {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+
+        .btn {
+            margin-top: 1.5rem;
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: #0066cc;
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #004c99;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 102, 204, 0.3);
+        }
+
+        /* Create background elements */
+        .bg-element {
+            position: absolute;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .bg-square {
+            width: 80px;
+            height: 80px;
+            background-color: #0066cc;
+            animation: float 15s ease-in-out infinite;
+        }
+
+        .bg-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #73c0ff;
+            animation: float 20s ease-in-out infinite reverse;
+        }
+
+        .bg-triangle {
+            width: 0;
+            height: 0;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+            border-bottom: 100px solid #2d8cf0;
+            animation: float 18s ease-in-out infinite 2s;
+        }
+
+        #notify-form {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        #email {
+            padding: 0.8rem 1rem;
+            width: 300px;
+            border: 1px solid #ced4da;
+            border-radius: 30px 0 0 30px;
+            outline: none;
+        }
+
+        #notify-btn {
+            padding: 0.8rem 1.5rem;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 0 30px 30px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #notify-btn:hover {
+            background-color: #004c99;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .maintenance-container {
+                width: 90%;
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            p {
+                font-size: 1rem;
+            }
+            
+            #email {
+                width: 60%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background elements -->
+    <div class="bg-element bg-square" style="top: 15%; left: 10%;"></div>
+    <div class="bg-element bg-circle" style="bottom: 20%; right: 15%;"></div>
+    <div class="bg-element bg-triangle" style="top: 25%; right: 25%;"></div>
+    <div class="bg-element bg-square" style="bottom: 10%; left: 20%;"></div>
+
+    <div class="maintenance-container">
+        <h1>Under Maintenance</h1>
+        <p>We're currently improving our website to provide you with a better experience. Please check back soon!</p>
+        
+        <div class="gear-container">
+            <!-- Animated gears -->
+            <div class="gear gear-large">
+                <div class="teeth"></div>
+                <div class="teeth"></div>
+                <div class="teeth"></div>
+                <div class="teeth"></div>
+                <div class="teeth"></div>
+                <div class="teeth"></div>
+                <div class="teeth"></div>
+                <div class="teeth"></div>
+            </div>
+            <div class="gear gear-medium">
+                <div class="teeth"></div>
+                <div class="teeth"></div>
+                <div class="teeth"></div>
+                <div class="teeth"></div>
+                <div class="teeth"></div>
+                <div class="teeth"></div>
+            </div>
+            <div class="gear gear-small">
+                <div class="teeth"></div>
+                <div class="teeth"></div>
+                <div class="teeth"></div>
+                <div class="teeth"></div>
+            </div>
+        </div>
+        
+        <p>Our team is working hard to get everything back up and running. We appreciate your patience!</p>
+        
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+        
+        <form id="notify-form">
+            <input type="email" id="email" placeholder="Enter your email" required>
+            <button type="submit" id="notify-btn">Notify Me</button>
+        </form>
+        
+        <button class="btn" onclick="checkStatus()">Check Status</button>
+    </div>
+
+    <script>
+        // Create floating background bubbles
+        function createBackgroundElements() {
+            const body = document.querySelector('body');
+            const colors = ['#0066cc', '#2d8cf0', '#73c0ff'];
+            
+            for (let i = 0; i < 20; i++) {
+                const size = Math.random() * 60 + 20;
+                const element = document.createElement('div');
+                element.classList.add('floating-circle', 'bg-element');
+                element.style.width = `${size}px`;
+                element.style.height = `${size}px`;
+                element.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                element.style.left = `${Math.random() * 100}%`;
+                element.style.top = `${Math.random() * 100}%`;
+                element.style.animation = `float ${Math.random() * 10 + 10}s ease-in-out infinite ${Math.random() * 5}s`;
+                
+                body.appendChild(element);
+            }
+        }
+        
+        // Simulate checking status
+        function checkStatus() {
+            const btn = document.querySelector('.btn');
+            btn.textContent = 'Checking...';
+            
+            setTimeout(() => {
+                btn.textContent = 'Still under maintenance';
+                
+                setTimeout(() => {
+                    btn.textContent = 'Check Status';
+                }, 2000);
+            }, 1500);
+        }
+        
+        // Handle form submission
+        document.getElementById('notify-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email');
+            if (email.value) {
+                alert(`Thank you! We'll notify ${email.value} when we're back online.`);
+                email.value = '';
+            }
+        });
+        
+        // Initialize
+        createBackgroundElements();
+    </script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple Inc. (AAPL)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkblue: {
+                            50: '#f0f7ff',
+                            100: '#e0f0fe',
+                            200: '#bae0fd',
+                            300: '#7cc6fd',
+                            400: '#36acf9',
+                            500: '#0d96ec',
+                            600: '#0277ce',
+                            700: '#0263a8',
+                            800: '#05528a',
+                            900: '#0a4674',
+                            950: '#0a2543'
+                        },
+                        positive: '#10b981',
+                        negative: '#ef4444'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    },
+                    boxShadow: {
+                        card: '0 4px 6px -1px rgba(10, 37, 67, 0.05), 0 2px 4px -1px rgba(10, 37, 67, 0.03)',
+                        'card-hover': '0 10px 15px -3px rgba(10, 37, 67, 0.08), 0 4px 6px -2px rgba(10, 37, 67, 0.05)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .chart-container {
+            height: 250px;
+            width: 100%;
+            background: linear-gradient(180deg, rgba(240, 247, 255, 0.5) 0%, rgba(240, 247, 255, 0) 100%);
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.5rem;
+        }
+        .chart-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: scale(1.1);
+        }
+        .chart-line path {
+            fill: none;
+            stroke: #0d96ec;
+            stroke-width: 2;
+            stroke-linecap: round;
+        }
+        .chart-line .fill {
+            fill: url(#gradient);
+            stroke: none;
+        }
+    </style>
+</head>
+<body class="bg-darkblue-50 h-full text-darkblue-950 font-sans">
+   
+
+    <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+
+        
+        <!-- Grid Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Company Info Section -->
+            <div class="bg-white rounded-lg shadow-card border border-darkblue-100 overflow-hidden hover:shadow-card-hover transition-shadow duration-300">
+                <div class="px-6 py-4 border-b border-darkblue-100 bg-sky-950 to-white flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-darkblue-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 17H15M9 17V13.6C9 13.2686 9.26863 13 9.6 13H14.4C14.7314 13 15 13.2686 15 13.6V17M9 17H7M15 17H17M13 7H17M13 11H17M7 7H9M7 11H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M5 3H19C20.1046 3 21 3.89543 21 5V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V5C3 3.89543 3.89543 3 5 3Z" stroke="currentColor" stroke-width="1.5" />
+                    </svg>
+                    <h2 class="text-lg font-medium text-white">Company Info</h2>
+                </div>
+                <div class="px-6 py-4">
+                    <dl class="divide-y divide-darkblue-100">
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">Company</dt>
+                            <dd class="text-sm font-medium text-darkblue-950">Apple Inc.</dd>
+                        </div>
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">Sector</dt>
+                            <dd class="text-sm font-medium text-darkblue-950">Technology</dd>
+                        </div>
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">Industry</dt>
+                            <dd class="text-sm font-medium text-darkblue-950">Consumer Electronics</dd>
+                        </div>
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">Country</dt>
+                            <dd class="text-sm font-medium text-darkblue-950">USA</dd>
+                        </div>
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">Exchange</dt>
+                            <dd class="text-sm font-medium text-darkblue-950">NASDAQ</dd>
+                        </div>
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">Index</dt>
+                            <dd class="text-sm font-medium text-darkblue-950">S&P 500, NASDAQ 100, Dow Jones</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Valuation Ratios Section -->
+            <div class="bg-white rounded-lg shadow-card border border-darkblue-100 overflow-hidden hover:shadow-card-hover transition-shadow duration-300">
+                <div class="px-6 py-4 border-b border-darkblue-100 bg-sky-950 to-white flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-darkblue-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 16H4M8 16C8 18.2091 9.79086 20 12 20C14.2091 20 16 18.2091 16 16M8 16C8 13.7909 9.79086 12 12 12C14.2091 12 16 13.7909 16 16M16 16H20M20 8H16M16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8M16 8C16 10.2091 14.2091 12 12 12C9.79086 12 8 10.2091 8 8M8 8H4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <h2 class="text-lg font-medium text-white">Valuation Ratios</h2>
+                </div>
+                <div class="px-6 py-4">
+                    <dl class="divide-y divide-darkblue-100">
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">P/E Ratio</dt>
+                            <dd class="text-sm font-mono font-medium text-darkblue-950">28.45</dd>
+                        </div>
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">Forward P/E</dt>
+                            <dd class="text-sm font-mono font-medium text-darkblue-950">24.67</dd>
+                        </div>
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">P/S Ratio</dt>
+                            <dd class="text-sm font-mono font-medium text-darkblue-950">7.83</dd>
+                        </div>
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">P/B Ratio</dt>
+                            <dd class="text-sm font-mono font-medium text-darkblue-950">46.12</dd>
+                        </div>
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">P/FCF</dt>
+                            <dd class="text-sm font-mono font-medium text-darkblue-950">25.37</dd>
+                        </div>
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">Market Cap</dt>
+                            <dd class="text-sm font-mono font-medium text-darkblue-950">2.86T</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Performance Overview Section -->
+            <div class="bg-white rounded-lg shadow-card border border-darkblue-100 overflow-hidden hover:shadow-card-hover transition-shadow duration-300">
+                <div class="px-6 py-4 border-b border-darkblue-100 bg-sky-950 to-white flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-darkblue-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 12L10 9M10 9L13 12M10 9V17M17 12L14 9M14 9L11 12M14 9V17M22 17H2M19 5H5C3.89543 5 3 5.89543 3 7V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V7C21 5.89543 20.1046 5 19 5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <h2 class="text-lg font-medium text-white">Performance</h2>
+                </div>
+                <div class="px-6 py-4">
+                    <dl class="divide-y divide-darkblue-100">
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">Performance Week</dt>
+                            <dd class="text-sm font-mono font-medium text-positive flex items-center">
+                                2.45% <i class="fas fa-arrow-up ml-1 text-xs"></i>
+                            </dd>
+                        </div>
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">Performance Month</dt>
+                            <dd class="text-sm font-mono font-medium text-negative flex items-center">
+                                -1.78% <i class="fas fa-arrow-down ml-1 text-xs"></i>
+                            </dd>
+                        </div>
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">Performance Quarter</dt>
+                            <dd class="text-sm font-mono font-medium text-positive flex items-center">
+                                8.92% <i class="fas fa-arrow-up ml-1 text-xs"></i>
+                            </dd>
+                        </div>
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">Performance YTD</dt>
+                            <dd class="text-sm font-mono font-medium text-positive flex items-center">
+                                12.37% <i class="fas fa-arrow-up ml-1 text-xs"></i>
+                            </dd>
+                        </div>
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">52W High</dt>
+                            <dd class="text-sm font-mono font-medium text-negative flex items-center">
+                                -5.23% <i class="fas fa-arrow-down ml-1 text-xs"></i>
+                            </dd>
+                        </div>
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">52W Low</dt>
+                            <dd class="text-sm font-mono font-medium text-positive flex items-center">
+                                34.68% <i class="fas fa-arrow-up ml-1 text-xs"></i>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+            
+            <!-- Key Financials Section -->
+            <div class="bg-white rounded-lg shadow-card border border-darkblue-100 overflow-hidden hover:shadow-card-hover transition-shadow duration-300">
+                <div class="px-6 py-4 border-b border-darkblue-100 bg-sky-950 to-white flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-darkblue-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 8H8M16 8C18.2091 8 20 9.79086 20 12C20 14.2091 18.2091 16 16 16H8M16 8V5M8 16C5.79086 16 4 14.2091 4 12C4 9.79086 5.79086 8 8 8M8 16V19M12 3V6M12 18V21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <h2 class="text-lg font-medium text-white">Key Financials</h2>
+                </div>
+                <div class="px-6 py-4">
+                    <dl class="divide-y divide-darkblue-100">
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">Revenue</dt>
+                            <dd class="text-sm font-mono font-medium text-darkblue-950">394.33B</dd>
+                        </div>
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">Income</dt>
+                            <dd class="text-sm font-mono font-medium text-darkblue-950">96.99B</dd>
+                        </div>
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">EPS (ttm)</dt>
+                            <dd class="text-sm font-mono font-medium text-darkblue-950">6.14</dd>
+                        </div>
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">EPS next Y</dt>
+                            <dd class="text-sm font-mono font-medium text-positive flex items-center">
+                                6.95 <i class="fas fa-arrow-up ml-1 text-xs"></i>
+                            </dd>
+                        </div>
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">PEG Ratio</dt>
+                            <dd class="text-sm font-mono font-medium text-darkblue-950">2.41</dd>
+                        </div>
+                        <div class="py-3 flex justify-between">
+                            <dt class="text-sm font-medium text-darkblue-600">EPS this Y</dt>
+                            <dd class="text-sm font-mono font-medium text-negative flex items-center">
+                                -2.78% <i class="fas fa-arrow-down ml-1 text-xs"></i>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

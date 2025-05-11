@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Prediction Dashboard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <!-- Plotly.js for charts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.12.1/plotly.min.js"></script>
+    <style>
+        .gradient-header {
+            background: linear-gradient(90deg, #1e3a8a 0%, #1e40af 100%);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        
+        /* Table styles */
+        .stock-table tbody tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        
+        .stock-table tbody tr:hover {
+            background-color: #e0e7ff;
+        }
+        
+        /* Active tab indicator */
+        .tab-btn.active {
+            border-bottom-color: #1e40af;
+            color: #1e3a8a;
+            font-weight: 600;
+        }
+        
+        /* Active model button */
+        .model-btn.active {
+            background-color: #1e40af;
+            color: white;
+        }
+        
+        /* Active news source button */
+        .news-source-btn.active {
+            background-color: #1e40af;
+            color: white;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #1e40af;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1e3a8a;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen p-4">
+     <header class="relative top-0 left-0 w-full py-4 z-50">    
+         <div class="max-w-7xl mx-auto">
+            <!-- Stock Header -->
+            <div class="flex flex-col md:flex-row justify-between items-start mb-6 bg-white p-4 rounded-lg shadow-sm">
+                <!-- Symbol Info Widget -->
+                <div class="tradingview-widget-container">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript">
+                        var widget = document.createElement('script');
+                        widget.type = 'text/javascript';
+                        widget.async = true;
+                        widget.src = "https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js";
+                        widget.innerText = JSON.stringify({
+                            symbol: "AAPL", // AAPL for Apple
+                            width: "100%",
+                            locale: "en",
+                            colorTheme: "light",
+                            isTransparent: true
+                        });
+                        document.querySelector('.tradingview-widget-container').appendChild(widget);
+                    </script>
+                </div>
+            </div>
+    
+            <!-- Main Card -->
+            <div class="bg-white rounded-lg mb-6 shadow-sm">
+                <div class="bg-gray-800 p-4 rounded-t-lg flex justify-between items-center">
+                    <h2 class="text-xl font-semibold text-white">Apple Inc. (AAPL)</h2>
+                    <div class="flex space-x-2">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                            <i class="fas fa-check-circle mr-1"></i>
+                            92% Confidence
+                        </span>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+                            <i class="fas fa-brain mr-1"></i>
+                            AI Recommended
+                        </span>
+                    </div>
+                </div>
+    
+                <!-- Tabs Navigation -->
+                <div class="flex justify-between border-b border-gray-200 overflow-x-auto" id="predictionTabs">
+                    <div class="flex">
+                        <button class="tab-btn px-6 py-3 font-medium text-blue-900 border-b-2 border-blue-700 active flex items-center" data-tab="forecast">
+                            <i class="fas fa-chart-line mr-1"></i> Forecast
+                        </button>
+                        <button class="tab-btn px-6 py-3 font-medium text-gray-600 hover:text-blue-900 border-b-2 border-transparent flex items-center" data-tab="historical">
+                            <i class="fas fa-history mr-1"></i> Historical Data
+                        </button>
+                        <button class="tab-btn px-6 py-3 font-medium text-gray-600 hover:text-blue-900 border-b-2 border-transparent flex items-center" data-tab="metrics">
+                            <i class="fas fa-chart-bar mr-1"></i> Metrics
+                        </button>
+                    </div>
+                    <div class="flex items-center pr-4">
+                        <label for="modelSelect" class="text-sm text-gray-600 mr-2">Model:</label>
+                        <select id="modelSelect" class="bg-blue-700 text-white px-3 py-1 rounded-md text-sm">
+                            <option value="lstm">LSTM</option>
+                            <option value="svm">SVM</option>
+                        </select>
+                    </div>
+                </div>
+    
+                <!-- Tab Content - Forecast (Default Active) -->
+                <div id="forecast-tab" class="tab-content block p-4">
+                    <!-- Graph and Prediction Summary -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+                        <div class="lg:col-span-2 bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+                            <h3 class="text-lg font-semibold text-blue-900 mb-2">Stock Prediction Forecast
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 ml-2">
+                                    1 week
+                                </span>
+                            </h3>
+                            <div class="chart-container">
+                                <div class="plot-container" id="forecastPlot"></div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h3 class="text-lg font-semibold text-blue-900 mb-3">Stock Prediction</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="text-sm text-gray-500">Price Target (tomorrow)</div>
+                                    <div class="text-2xl font-bold text-blue-900">$195.78</div>
+                                </div>
+                                <div class="border-t border-gray-200 pt-3">
+                                    <div class="text-sm text-gray-500">Confidence Interval</div>
+                                    <div class="text-md">$192.45 to $198.65</div>
+                                </div>
+                                <div class="border-t border-gray-200 pt-3">
+                                    <div class="text-sm text-gray-500">Confidence</div>
+                                    <div class="h-3 bg-gray-200 rounded-full mt-1">
+                                        <div class="h-3 rounded-full bg-green-500" style="width:92%"></div>
+                                    </div>
+                                    <div class="text-right text-xs mt-1 text-gray-600">92%</div>
+                                </div>
+                                <div class="border-t border-gray-200 pt-3">
+                                    <div class="text-sm text-gray-500">Model Type</div>
+                                    <div class="text-sm mt-1">
+                                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs" id="model-type-display">Long Term Short Memory(LSTM)</span>
+                                    </div>
+                                </div>
+                                <div class="border-t border-gray-200 pt-3">
+                                    <div class="text-sm text-gray-500">Description</div>
+                                    <div id="model-description" class="text-sm mt-1 text-gray-700">
+                                        LSTM is a powerful machine learning model commonly used for predicting continuous values in regression tasks, thanks to its ability to capture long-term dependencies in sequential data.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- Stock table Predicted -->
+                    <div class="overflow-x-auto rounded-lg border border-gray-200">
+                        <table class="stock-table w-full text-sm">
+                            <thead>
+                                <tr class="bg-gray-100 text-left">
+                                    <th class="p-3 font-semibold text-blue-900">Date</th>
+                                    <th class="p-3 font-semibold text-blue-900">Predicted Close ($)</th>
+                                    <th class="p-3 font-semibold text-blue-900">Change</th>
+                                    <th class="p-3 font-semibold text-blue-900">Confidence</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="p-3">May 10, 2025</td>
+                                    <td class="p-3">$195.78</td>
+                                    <td class="p-3 text-green-600">+1.2%</td>
+                                    <td class="p-3">
+                                        <span class="text-green-600">92%</span>
+                                        <div class="h-2 bg-gray-200 rounded-full mt-1">
+                                            <div class="h-2 rounded-full bg-green-500" style="width: 92%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3">May 11, 2025</td>
+                                    <td class="p-3">$197.43</td>
+                                    <td class="p-3 text-green-600">+0.8%</td>
+                                    <td class="p-3">
+                                        <span class="text-green-600">89%</span>
+                                        <div class="h-2 bg-gray-200 rounded-full mt-1">
+                                            <div class="h-2 rounded-full bg-green-500" style="width: 89%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3">May 12, 2025</td>
+                                    <td class="p-3">$196.92</td>
+                                    <td class="p-3 text-red-600">-0.3%</td>
+                                    <td class="p-3">
+                                        <span class="text-green-600">87%</span>
+                                        <div class="h-2 bg-gray-200 rounded-full mt-1">
+                                            <div class="h-2 rounded-full bg-green-500" style="width: 87%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3">May 13, 2025</td>
+                                    <td class="p-3">$198.56</td>
+                                    <td class="p-3 text-green-600">+0.8%</td>
+                                    <td class="p-3">
+                                        <span class="text-green-600">85%</span>
+                                        <div class="h-2 bg-gray-200 rounded-full mt-1">
+                                            <div class="h-2 rounded-full bg-green-500" style="width: 85%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3">May 14, 2025</td>
+                                    <td class="p-3">$200.12</td>
+                                    <td class="p-3 text-green-600">+0.8%</td>
+                                    <td class="p-3">
+                                        <span class="text-yellow-600">78%</span>
+                                        <div class="h-2 bg-gray-200 rounded-full mt-1">
+                                            <div class="h-2 rounded-full bg-yellow-500" style="width: 78%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <a href="/download_forecast/AAPL" class="bg-blue-700 text-white px-4 py-2 rounded-lg text-sm flex items-center">
+                            <i class="fas fa-download mr-2"></i> Download Forecast Data
+                        </a>
+                    </div>
+                </div>
+
+          <!-- Tab Content - Historical -->
+<div id="historical-tab" class="tab-content hidden p-4">
+    <!-- Graph and Historical Data Summary -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+        <!-- Historical Chart Container -->
+        <div class="lg:col-span-2 bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+            <h3 class="text-lg font-semibold text-blue-900 mb-2">Historical Data
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 ml-2">
+                    6 months
+                </span>
+                <div class="float-right">
+                    <select id="timeRangeSelect" class="text-sm border border-gray-300 rounded-md p-1 bg-white">
+                        <option value="1m">1 Month</option>
+                        <option value="3m">3 Months</option>
+                        <option value="6m" selected>6 Months</option>
+                        <option value="1y">1 Year</option>
+                        <option value="max">Max</option>
+                    </select>
+                </div>
+            </h3>
+            <div class="chart-container" style="height: 500px;">
+                <div id="historicalPlot" style="width: 100%; height: 100%;"></div>
+            </div>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <h3 class="text-lg font-semibold text-blue-900 mb-3">Performance Summary</h3>
+            <div class="space-y-3">
+                <div>
+                    <div class="text-sm text-gray-500">Current Price</div>
+                    <div class="text-2xl font-bold text-blue-900">$189.96</div>
+                </div>
+                <div class="border-t border-gray-200 pt-3">
+                    <div class="text-sm text-gray-500">52-Week Range</div>
+                    <div class="text-md" id="year-range">$158.77 - $218.32</div>
+                </div>
+                <div class="border-t border-gray-200 pt-3">
+                    <div class="text-sm text-gray-500">6-Month Change</div>
+                    <div class="text-md" id="six-month-change">+12.4%</div>
+                </div>
+                <div class="border-t border-gray-200 pt-3">
+                    <div class="text-sm text-gray-500">Average Volume</div>
+                    <div class="text-md" id="avg-volume">65.8M</div>
+                </div>
+                <div class="border-t border-gray-200 pt-3">
+                    <div class="text-sm text-gray-500">Market Cap</div>
+                    <div class="text-md" id="market-cap">$2.94T</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historical Stock Data Table -->
+    <div class="overflow-x-auto rounded-lg border border-gray-200">
+        <table class="stock-table w-full text-sm">
+            <thead>
+                <tr class="bg-gray-100 text-left">
+                    <th class="px-6 py-3 border-b">Date</th>
+                    <th class="px-6 py-3 border-b">Open</th>
+                    <th class="px-6 py-3 border-b">High</th>
+                    <th class="px-6 py-3 border-b">Low</th>
+                    <th class="px-6 py-3 border-b">Close</th>
+                    <th class="px-6 py-3 border-b">Change (%)</th>
+                </tr>
+            </thead>
+            <tbody id="historicalTableBody">
+                <!-- Table body will be populated by JavaScript -->
+            </tbody>
+        </table>
+        <!-- Pagination Controls -->
+        <div class="flex justify-between p-4">
+            <p id="paginationInfo" class="text-gray-600">Showing 1 of 9 pages</p>
+            <div class="flex items-center space-x-2">
+                <button id="prevPage" class="bg-gray-200 px-3 py-1 rounded-lg">Previous</button>
+                <span id="currentPage">1</span>
+                <button id="nextPage" class="bg-gray-200 px-3 py-1 rounded-lg">Next</button>
+                <select id="itemsPerPage" class="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg border border-gray-300">
+                    <option value="20">20 / page</option>
+                    <option value="50">50 / page</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4 flex justify-end">
+        <a href="/download_historical/AAPL" class="bg-blue-700 text-white px-4 py-2 rounded-lg text-sm flex items-center">
+            <i class="fas fa-download mr-2"></i> Download Historical Data
+        </a>
+    </div>
+</div>
+
+<!-- Tab Content - Metrics -->
+<div id="metrics-tab" class="tab-content hidden p-4">
+    <div class="bg-white shadow rounded-lg p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Model Performance Metrics</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- MSE Metric -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-gray-500 mb-1">Mean Squared Error (MSE)</p>
+                <p class="text-xl font-bold" id="mse-value">4.82</p>
+                <p class="text-sm text-gray-500 mt-1">Lower values indicate better fit</p>
+            </div>
+            
+            <!-- RMSE Metric -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-gray-500 mb-1">Root MSE (RMSE)</p>
+                <p class="text-xl font-bold" id="rmse-value">2.19</p>
+                <p class="text-sm text-gray-500 mt-1">Error in price units</p>
+            </div>
+            
+            <!-- MAE Metric -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-gray-500 mb-1">Mean Absolute Error (MAE)</p>
+                <p class="text-xl font-bold" id="mae-value">1.75</p>
+                <p class="text-sm text-gray-500 mt-1">Average absolute difference</p>
+            </div>
+            
+            <!-- MAPE Metric -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-gray-500 mb-1">Mean Absolute Percentage Error</p>
+                <p class="text-xl font-bold" id="mape-value">0.92%</p>
+                <p class="text-sm text-gray-500 mt-1">Percentage error measure</p>
+            </div>
+            
+            <!-- R² Metric -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-gray-500 mb-1">R² Score</p>
+                <p class="text-xl font-bold" id="r-squared-value">0.83</p>
+                <p class="text-sm text-gray-500 mt-1">1.0 is perfect prediction</p>
+            </div>
+            
+            <!-- Model Info -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-gray-500 mb-1">Training Window</p>
+                <p class="text-xl font-bold" id="training-window">20 days</p>
+                <p class="text-sm text-gray-500 mt-1">Model training period</p>
+            </div>
+        </div>
+        
+        <!-- Data Info -->
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-gray-500 mb-1">Total Data Points</p>
+                <p class="text-xl font-bold" id="total-data-points">18 months</p>
+                <p class="text-sm text-gray-500 mt-1">Historical records used</p>
+            </div>
+            
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-gray-500 mb-1">Training Examples</p>
+                <p class="text-xl font-bold" id="training-examples">Sliding windows</p>
+                <p class="text-sm text-gray-500 mt-1">Window-based training</p>
+            </div>
+        </div>
+        <div class="alert alert-info mt-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <strong class="text-blue-800">Note:</strong> These predictions are based on historical patterns and should be used as one of many tools for investment decisions, not as the sole decision-making factor.
+        </div>
+    </div>
+</div>
+<!-- Main JavaScript -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Dummy historical data for AAPL in format: date,open,high,low,close,change
+        const historicalDataStr = "2025-05-09,190.22,192.45,189.01,189.96,-0.14|2025-05-08,191.35,193.12,190.08,190.23,-0.58|2025-05-07,192.67,194.50,191.25,191.34,-0.69|2025-05-06,193.45,195.78,192.31,192.67,0.89|2025-05-05,191.20,193.62,190.16,190.97,1.18|2025-05-02,189.03,191.92,188.45,188.75,0.37|2025-05-01,187.92,189.33,187.13,188.05,0.07|2025-04-30,188.54,190.78,186.92,187.79,-0.40|2025-04-29,189.34,191.45,188.12,188.54,-0.42|2025-04-28,190.12,191.77,188.95,189.34,-0.41|2025-04-25,192.45,194.32,189.78,190.12,-1.21|2025-04-24,193.87,195.16,191.89,192.45,-0.73|2025-04-23,194.23,196.45,192.78,193.87,-0.19|2025-04-22,195.12,198.34,193.68,194.23,-0.46|2025-04-21,196.78,197.89,194.53,195.12,-0.84|2025-04-18,197.34,199.45,196.12,196.78,-0.28|2025-04-17,196.56,198.76,195.34,197.34,0.40|2025-04-16,195.23,197.65,194.56,196.56,0.68|2025-04-15,193.78,196.32,193.21,195.23,0.75|2025-04-14,192.34,194.56,191.67,193.78,0.75|2025-04-11,191.23,193.45,190.56,192.34,0.58|2025-04-10,189.87,192.34,189.12,191.23,0.72|2025-04-09,187.56,190.23,186.89,189.87,1.23|2025-04-08,185.23,188.45,184.67,187.56,1.26|2025-04-07,183.12,186.78,182.56,185.23,1.15|2025-04-04,180.45,183.89,179.67,183.12,1.48|2025-04-03,178.95,181.34,177.89,180.45,0.84|2025-04-02,176.78,179.56,176.23,178.95,1.23|2025-04-01,175.34,177.89,174.56,176.78,0.82|2025-03-31,173.45,176.23,172.89,175.34,1.09|2025-03-28,172.56,174.89,171.76,173.45,0.52|2025-03-27,170.89,173.45,170.12,172.56,0.98|2025-03-26,169.34,171.89,168.45,170.89,0.91|2025-03-25,167.82,170.34,167.12,169.34,0.91|2025-03-24,165.78,168.56,165.12,167.82,1.23|2025-03-21,164.23,166.89,163.45,165.78,0.94|2025-03-20,162.56,165.67,162.12,164.23,1.03|2025-03-19,160.78,163.45,159.89,162.56,1.11|2025-03-18,158.95,161.78,158.23,160.78,1.15|2025-03-17,156.78,159.56,156.12,158.95,1.38|2025-03-14,155.23,157.89,154.67,156.78,1.00";
+        
+        // Parse historical data
+        const historicalData = [];
+        
+        if (historicalDataStr) {
+            const rows = historicalDataStr.split('|');
+            rows.forEach(row => {
+                const [date, open, high, low, close, change] = row.split(',');
+                historicalData.push({
+                    date: date,
+                    open: parseFloat(open),
+                    high: parseFloat(high),
+                    low: parseFloat(low),
+                    close: parseFloat(close),
+                    change: parseFloat(change)
+                });
+            });
+        }
+        
+        // Set up pagination
+        let currentPage = 1;
+        const itemsPerPage = 20;
+        const totalPages = Math.ceil(historicalData.length / itemsPerPage);
+        
+        // Populate historical data table
+        function populateHistoricalTable() {
+            // Get the table body element
+            const tableBody = document.getElementById('historicalTableBody');
+            
+            // Clear existing rows
+            tableBody.innerHTML = '';
+            
+            // Sort the data by date (newest first)
+            historicalData.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            // Calculate start and end index for current page
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, historicalData.length);
+            
+            // Add rows to the table for current page
+            for (let i = startIndex; i < endIndex; i++) {
+                const row = historicalData[i];
+                const tr = document.createElement('tr');
+                
+                // Add hover effect
+                tr.className = 'border-b hover:bg-gray-100';
+                
+                // Create and append cells
+                const dateCell = document.createElement('td');
+                dateCell.className = 'px-6 py-3';
+                dateCell.textContent = row.date;
+                tr.appendChild(dateCell);
+                
+                const openCell = document.createElement('td');
+                openCell.className = 'px-6 py-3';
+                openCell.textContent = `$${row.open.toFixed(2)}`;
+                tr.appendChild(openCell);
+                
+                const highCell = document.createElement('td');
+                highCell.className = 'px-6 py-3';
+                highCell.textContent = `$${row.high.toFixed(2)}`;
+                tr.appendChild(highCell);
+                
+                const lowCell = document.createElement('td');
+                lowCell.className = 'px-6 py-3';
+                lowCell.textContent = `$${row.low.toFixed(2)}`;
+                tr.appendChild(lowCell);
+                
+                const closeCell = document.createElement('td');
+                closeCell.className = 'px-6 py-3';
+                closeCell.textContent = `$${row.close.toFixed(2)}`;
+                tr.appendChild(closeCell);
+                
+                const changeCell = document.createElement('td');
+                changeCell.className = 'px-6 py-3';
+                const changeClass = row.change >= 0 ? 'text-green-600' : 'text-red-600';
+                const changeSign = row.change >= 0 ? '+' : '';
+                changeCell.innerHTML = `<span class="${changeClass}">${changeSign}${row.change.toFixed(2)}%</span>`;
+                tr.appendChild(changeCell);
+                
+                tableBody.appendChild(tr);
+            }
+            
+            // Update pagination info
+            document.getElementById('paginationInfo').textContent = `Showing ${currentPage} of ${totalPages} pages`;
+            document.getElementById('currentPage').textContent = currentPage;
+            
+            // Update button states
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = currentPage === totalPages;
+        }
+        
+        // Add event listeners for pagination
+        document.getElementById('prevPage').addEventListener('click', function() {
+            if (currentPage > 1) {
+                currentPage--;
+                populateHistoricalTable();
+            }
+        });
+        
+        document.getElementById('nextPage').addEventListener('click', function() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                populateHistoricalTable();
+            }
+        });
+        
+        // Create historical data chart
+        function createHistoricalChart() {
+            // Filter data based on selected time range
+            const timeRangeSelect = document.getElementById('timeRangeSelect');
+            const selectedRange = timeRangeSelect.value;
+            
+            let filteredData = [...historicalData];
+            
+            // Sort by date ascending for chart
+            filteredData.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            // Convert to arrays for Plotly
+            const dates = filteredData.map(d => d.date);
+            const closes = filteredData.map(d => d.close);
+            const highs = filteredData.map(d => d.high);
+            const lows = filteredData.map(d => d.low);
+            const opens = filteredData.map(d => d.open);
+            
+            // Create candlestick chart
+            const candlestickTrace = {
+                x: dates,
+                close: closes,
+                high: highs,
+                low: lows,
+                open: opens,
+                type: 'candlestick',
+                name: 'AAPL',
+                increasing: {line: {color: '#26A69A'}},
+                decreasing: {line: {color: '#EF5350'}}
+            };
+            
+            // Create line for closing prices
+            const lineTrace = {
+                x: dates,
+                y: closes,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Close Price',
+                line: {color: '#2E86C1', width: 1}
+            };
+            
+            const layout = {
+                title: 'AAPL Historical Price',
+                yaxis: {title: 'Price ($)', tickprefix: '$'},
+                xaxis: {
+                    title: 'Date',
+                    rangeslider: {visible: false}
+                },
+                legend: {orientation: 'h', y: 1.1},
+                margin: {l: 50, r: 20, t: 40, b: 40},
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                paper_bgcolor: 'rgba(0,0,0,0)'
+            };
+            
+            const config = {responsive: true, displayModeBar: false};
+            
+            Plotly.newPlot('historicalPlot', [candlestickTrace, lineTrace], layout, config);
+        }
+        
+        // Create forecast plot
+        function createForecastPlot() {
+            // Mock data for forecast
+            const dates = ['2025-05-08', '2025-05-09', '2025-05-10', '2025-05-11', '2025-05-12', '2025-05-13', '2025-05-14'];
+            const actual = [190.23, 189.96, null, null, null, null, null];
+            const predicted = [190.85, 190.12, 195.78, 197.43, 196.92, 198.56, 200.12];
+            const upperBound = [null, null, 198.65, 200.26, 199.92, 201.23, 203.45];
+            const lowerBound = [null, null, 192.45, 194.12, 193.67, 195.12, 196.89];
+            
+            // Actual price trace
+            const actualTrace = {
+                x: dates,
+                y: actual,
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: 'Actual',
+                line: {color: '#1F77B4', width: 2},
+                marker: {size: 8}
+            };
+            
+            // Predicted price trace
+            const predictedTrace = {
+                x: dates,
+                y: predicted,
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: 'Predicted',
+                line: {color: '#FF7F0E', width: 2, dash: 'dash'},
+                marker: {size: 8}
+            };
+            
+            // Confidence interval
+            const upperTrace = {
+                x: dates,
+                y: upperBound,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Upper Bound',
+                line: {width: 0},
+                marker: {color: 'rgba(255, 127, 14, 0)'}
+            };
+            
+            const lowerTrace = {
+                x: dates,
+                y: lowerBound,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Lower Bound',
+                fill: 'tonexty',
+                fillcolor: 'rgba(255, 127, 14, 0.2)',
+                line: {width: 0},
+                marker: {color: 'rgba(255, 127, 14, 0)'}
+            };
+            
+            const layout = {
+                title: 'AAPL Stock Price Forecast',
+                yaxis: {title: 'Price ($)', tickprefix: '$'},
+                xaxis: {title: 'Date'},
+                legend: {orientation: 'h', y: 1.1},
+                shapes: [{
+                    type: 'line',
+                    xref: 'x',
+                    yref: 'paper',
+                    x0: '2025-05-09',
+                    y0: 0,
+                    x1: '2025-05-09',
+                    y1: 1,
+                    line: {
+                        color: 'grey',
+                        width: 1,
+                        dash: 'dash'
+                    }
+                }],
+                annotations: [{
+                    x: '2025-05-09',
+                    y: Math.max(...predicted) + 5,
+                    xref: 'x',
+                    yref: 'y',
+                    text: 'Today',
+                    showarrow: true,
+                    arrowhead: 7,
+                    ax: 0,
+                    ay: -40
+                }],
+                margin: {l: 50, r: 20, t: 40, b: 40},
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                paper_bgcolor: 'rgba(0,0,0,0)'
+            };
+            
+            const config = {responsive: true, displayModeBar: false};
+            
+            Plotly.newPlot('forecastPlot', [actualTrace, predictedTrace, upperTrace, lowerTrace], layout, config);
+        }
+        
+        // Tab switching functionality
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    tab.classList.add('active');
+                    
+                    // Hide all tab contents
+                    tabContents.forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    
+                    // Show the selected tab content
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-tab`).classList.remove('hidden');
+                    
+                    // If historical tab, initialize the chart
+                    if (tabId === 'historical') {
+                        createHistoricalChart();
+                        populateHistoricalTable();
+                    } else if (tabId === 'forecast') {
+                        createForecastPlot();
+                    }
+                });
+            });
+        }
+        
+        // Model selection functionality
+        function setupModelSelect() {
+            const modelSelect = document.getElementById('modelSelect');
+            const modelTypeDisplay = document.getElementById('model-type-display');
+            const modelDescription = document.getElementById('model-description');
+            
+            modelSelect.addEventListener('change', function() {
+                const selectedModel = this.value;
+                
+                if (selectedModel === 'lstm') {
+                    modelTypeDisplay.textContent = 'Long Term Short Memory(LSTM)';
+                    modelDescription.textContent = 'LSTM is a powerful machine learning model commonly used for predicting continuous values in regression tasks, thanks to its ability to capture long-term dependencies in sequential data.';
+                } else if (selectedModel === 'svm') {
+                    modelTypeDisplay.textContent = 'Support Vector Machine(SVM)';
+                    modelDescription.textContent = 'SVM is a supervised learning algorithm that works by finding the hyperplane that best separates classes in feature space, making it effective for regression tasks with complex patterns.';
+                }
+                
+                // Update the prediction values (in a real app, this would fetch new predictions)
+                updateMetrics(selectedModel);
+            });
+        }
+        
+        // Update metrics based on selected model
+        function updateMetrics(modelType) {
+            // These would be fetched from the server in a real application
+            const metricsData = {
+                'lstm': {
+                    mse: '4.82',
+                    rmse: '2.19',
+                    mae: '1.75',
+                    mape: '0.92%',
+                    rSquared: '0.83',
+                    trainingWindow: '20 days'
+                },
+                'svm': {
+                    mse: '5.34',
+                    rmse: '2.31',
+                    mae: '1.89',
+                    mape: '0.98%',
+                    rSquared: '0.79',
+                    trainingWindow: '15 days'
+                }
+            };
+            
+            const selectedMetrics = metricsData[modelType];
+            
+            // Update metrics in the UI
+            document.getElementById('mse-value').textContent = selectedMetrics.mse;
+            document.getElementById('rmse-value').textContent = selectedMetrics.rmse;
+            document.getElementById('mae-value').textContent = selectedMetrics.mae;
+            document.getElementById('mape-value').textContent = selectedMetrics.mape;
+            document.getElementById('r-squared-value').textContent = selectedMetrics.rSquared;
+            document.getElementById('training-window').textContent = selectedMetrics.trainingWindow;
+        }
+        
+        // Initialize everything
+        function init() {
+            // Set up event handlers
+            setupTabs();
+            setupModelSelect();
+            
+            // Initialize with first tab active (forecast)
+            createForecastPlot();
+            
+            // Set up time range selector
+            document.getElementById('timeRangeSelect').addEventListener('change', createHistoricalChart);
+        }
+        
+        // Call initialization
+        init();
+    });
+</script>
+</body>
+</html>

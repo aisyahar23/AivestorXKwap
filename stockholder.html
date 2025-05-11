@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AAPL - Company Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1rem;
+        }
+        .span-12 { grid-column: span 12; }
+        .span-8 { grid-column: span 8; }
+        .span-4 { grid-column: span 4; }
+        
+        @media (max-width: 768px) {
+            .span-8, .span-4 {
+                grid-column: span 12;
+            }
+        }
+        
+        .data-card {
+            transition: transform 0.2s;
+        }
+        .data-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="bg-sky-50 min-h-screen">
+ 
+
+    <main class="container mx-auto py-8 px-4">
+        <!-- Stock Info Card -->
+        <div class="bg-white rounded-2xl shadow-md p-6 mb-8 border border-sky-100">
+            <div class="flex flex-wrap justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h2 class="text-2xl font-bold text-sky-950">$182.63</h2>
+                    <div class="flex items-center mt-1">
+                        <span class="text-green-600 font-semibold flex items-center">
+                            <i class="fas fa-caret-up mr-1"></i> 2.15 (1.19%)
+                        </span>
+                        <span class="text-gray-500 text-sm ml-2">Today</span>
+                    </div>
+                </div>
+                <div class="flex flex-col items-end">
+                    <div class="text-gray-600 text-sm">
+                        <span class="font-medium">Market Cap:</span> $2.87T
+                    </div>
+                    <div class="text-gray-600 text-sm">
+                        <span class="font-medium">Volume:</span> 56.2M
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bento Grid Layout -->
+        <div class="bento-grid">
+            <!-- Institution Ownership -->
+            <section class="span-12 data-card bg-white p-6 rounded-xl shadow-md border border-sky-100">
+                <h2 class="text-xl font-semibold text-sky-950 mb-4 flex items-center">
+                    <i class="fas fa-building text-sky-700 mr-2"></i> Institution Ownership
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-left text-gray-600">
+                        <thead class="bg-sky-950 text-white">
+                            <tr>
+                                <th class="py-3 px-4 rounded-tl-lg">Institution</th>
+                                <th class="py-3 px-4">Percent Held</th>
+                                <th class="py-3 px-4">Position</th>
+                                <th class="py-3 px-4 rounded-tr-lg">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-sky-100 hover:bg-sky-50">
+                                <td class="py-3 px-4">Vanguard Group Inc.</td>
+                                <td class="py-3 px-4">8.2%</td>
+                                <td class="py-3 px-4">1,280,347,000</td>
+                                <td class="py-3 px-4">$233.8B</td>
+                            </tr>
+                            <tr class="border-b border-sky-100 hover:bg-sky-50">
+                                <td class="py-3 px-4">BlackRock Inc.</td>
+                                <td class="py-3 px-4">6.4%</td>
+                                <td class="py-3 px-4">998,456,000</td>
+                                <td class="py-3 px-4">$182.3B</td>
+                            </tr>
+                            <tr class="border-b border-sky-100 hover:bg-sky-50">
+                                <td class="py-3 px-4">State Street Corporation</td>
+                                <td class="py-3 px-4">3.8%</td>
+                                <td class="py-3 px-4">592,307,000</td>
+                                <td class="py-3 px-4">$108.2B</td>
+                            </tr>
+                            <tr class="hover:bg-sky-50">
+                                <td class="py-3 px-4">Fidelity Management & Research</td>
+                                <td class="py-3 px-4">2.9%</td>
+                                <td class="py-3 px-4">452,183,000</td>
+                                <td class="py-3 px-4">$82.6B</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Fund Ownership -->
+            <section class="span-8 data-card bg-white p-6 rounded-xl shadow-md border border-sky-100">
+                <h2 class="text-xl font-semibold text-sky-950 mb-4 flex items-center">
+                    <i class="fas fa-users text-sky-700 mr-2"></i> Fund Ownership
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-left text-gray-600" id="fundOwnershipTable">
+                        <thead class="bg-sky-950 text-white">
+                            <tr>
+                                <th class="py-3 px-4 rounded-tl-lg">Fund Name</th>
+                                <th class="py-3 px-4">Percent Held</th>
+                                <th class="py-3 px-4">Position</th>
+                                <th class="py-3 px-4 rounded-tr-lg">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="fund-row border-b border-sky-100 hover:bg-sky-50">
+                                <td class="py-3 px-4">Vanguard Total Stock Market ETF</td>
+                                <td class="py-3 px-4">2.8%</td>
+                                <td class="py-3 px-4">436,120,000</td>
+                                <td class="py-3 px-4">$79.6B</td>
+                            </tr>
+                            <tr class="fund-row border-b border-sky-100 hover:bg-sky-50">
+                                <td class="py-3 px-4">Vanguard 500 Index Fund</td>
+                                <td class="py-3 px-4">2.1%</td>
+                                <td class="py-3 px-4">327,420,000</td>
+                                <td class="py-3 px-4">$59.8B</td>
+                            </tr>
+                            <tr class="fund-row border-b border-sky-100 hover:bg-sky-50">
+                                <td class="py-3 px-4">SPDR S&P 500 ETF Trust</td>
+                                <td class="py-3 px-4">1.7%</td>
+                                <td class="py-3 px-4">265,122,000</td>
+                                <td class="py-3 px-4">$48.4B</td>
+                            </tr>
+                            <tr class="fund-row hidden border-b border-sky-100 hover:bg-sky-50">
+                                <td class="py-3 px-4">Invesco QQQ Trust</td>
+                                <td class="py-3 px-4">1.6%</td>
+                                <td class="py-3 px-4">249,537,000</td>
+                                <td class="py-3 px-4">$45.6B</td>
+                            </tr>
+                            <tr class="fund-row hidden border-b border-sky-100 hover:bg-sky-50">
+                                <td class="py-3 px-4">iShares Core S&P 500 ETF</td>
+                                <td class="py-3 px-4">1.4%</td>
+                                <td class="py-3 px-4">218,325,000</td>
+                                <td class="py-3 px-4">$39.9B</td>
+                            </tr>
+                            <tr class="fund-row hidden hover:bg-sky-50">
+                                <td class="py-3 px-4">Fidelity 500 Index Fund</td>
+                                <td class="py-3 px-4">0.8%</td>
+                                <td class="py-3 px-4">124,674,000</td>
+                                <td class="py-3 px-4">$22.8B</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Pagination Controls -->
+                    <div class="flex justify-center mt-4 space-x-2">
+                        <button id="prevBtn" class="px-4 py-2 bg-sky-100 text-sky-800 rounded-lg hover:bg-sky-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-chevron-left mr-1"></i> Previous
+                        </button>
+                        <button id="nextBtn" class="px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-800 disabled:opacity-50 disabled:cursor-not-allowed">
+                            Next <i class="fas fa-chevron-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Insider Holders -->
+            <section class="span-4 data-card bg-white p-6 rounded-xl shadow-md border border-sky-100">
+                <h2 class="text-xl font-semibold text-sky-950 mb-4 flex items-center">
+                    <i class="fas fa-user-secret text-sky-700 mr-2"></i> Insider Holders
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-left text-gray-600">
+                        <thead class="bg-sky-950 text-white">
+                            <tr>
+                                <th class="py-3 px-4 rounded-tl-lg">Holder</th>
+                                <th class="py-3 px-4 rounded-tr-lg">Shares Held</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-sky-100 hover:bg-sky-50">
+                                <td class="py-3 px-4">Timothy Cook</td>
+                                <td class="py-3 px-4">3,280,052</td>
+                            </tr>
+                            <tr class="border-b border-sky-100 hover:bg-sky-50">
+                                <td class="py-3 px-4">Jeffrey Williams</td>
+                                <td class="py-3 px-4">489,260</td>
+                            </tr>
+                            <tr class="border-b border-sky-100 hover:bg-sky-50">
+                                <td class="py-3 px-4">Katherine Adams</td>
+                                <td class="py-3 px-4">427,522</td>
+                            </tr>
+                            <tr class="hover:bg-sky-50">
+                                <td class="py-3 px-4">Deirdre O'Brien</td>
+                                <td class="py-3 px-4">136,290</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Insider Transactions -->
+            <section class="span-12 data-card bg-white p-6 rounded-xl shadow-md border border-sky-100">
+                <h2 class="text-xl font-semibold text-sky-950 mb-4 flex items-center">
+                    <i class="fas fa-exchange-alt text-sky-700 mr-2"></i> Insider Transactions
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-left text-gray-600">
+                        <thead class="bg-sky-950 text-white">
+                            <tr>
+                                <th class="py-3 px-4 rounded-tl-lg">Transaction Date</th>
+                                <th class="py-3 px-4">Insider Name</th>
+                                <th class="py-3 px-4">Transaction Type</th>
+                                <th class="py-3 px-4">Shares Traded</th>
+                                <th class="py-3 px-4 rounded-tr-lg">Ownership</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-sky-100 hover:bg-sky-50">
+                                <td class="py-3 px-4">2025-05-01</td>
+                                <td class="py-3 px-4">Timothy Cook</td>
+                                <td class="py-3 px-4"><span class="text-red-600">Sale</span></td>
+                                <td class="py-3 px-4">75,000</td>
+                                <td class="py-3 px-4">Direct</td>
+                            </tr>
+                            <tr class="border-b border-sky-100 hover:bg-sky-50">
+                                <td class="py-3 px-4">2025-04-25</td>
+                                <td class="py-3 px-4">Katherine Adams</td>
+                                <td class="py-3 px-4"><span class="text-red-600">Sale</span></td>
+                                <td class="py-3 px-4">42,300</td>
+                                <td class="py-3 px-4">Direct</td>
+                            </tr>
+                            <tr class="border-b border-sky-100 hover:bg-sky-50">
+                                <td class="py-3 px-4">2025-04-15</td>
+                                <td class="py-3 px-4">Deirdre O'Brien</td>
+                                <td class="py-3 px-4"><span class="text-green-600">Buy</span></td>
+                                <td class="py-3 px-4">15,200</td>
+                                <td class="py-3 px-4">Direct</td>
+                            </tr>
+                            <tr class="hover:bg-sky-50">
+                                <td class="py-3 px-4">2025-04-10</td>
+                                <td class="py-3 px-4">Jeffrey Williams</td>
+                                <td class="py-3 px-4"><span class="text-red-600">Sale</span></td>
+                                <td class="py-3 px-4">25,760</td>
+                                <td class="py-3 px-4">Direct</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+
+
+    <script>
+        // Fund ownership pagination
+        let currentPage = 1;
+        const rowsPerPage = 3;
+        const rows = document.querySelectorAll('.fund-row');
+        const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+        function displayRows(page) {
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+
+            rows.forEach((row, index) => {
+                if (index >= start && index < end) {
+                    row.classList.remove('hidden');
+                } else {
+                    row.classList.add('hidden');
+                }
+            });
+
+            document.getElementById('prevBtn').disabled = (page === 1);
+            document.getElementById('nextBtn').disabled = (page === totalPages);
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayRows(currentPage);
+            }
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayRows(currentPage);
+            }
+        });
+
+        // Initial display
+        displayRows(currentPage);
+    </script>
+</body>
+</html>

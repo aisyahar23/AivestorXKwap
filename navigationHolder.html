@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Inc - AI-Powered Market Insights & Predictions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+        }
+        
+        .sidebar-item {
+            margin-bottom: 10px;
+        }
+        
+        .sidebar-divider {
+            height: 1px;
+            margin: 10px 0;
+        }
+        
+        /* Fix for main content display */
+        .content-container {
+            display: flex;
+            width: 100%;
+        }
+        
+        .sidebar {
+            flex: 0 0 25%;
+            max-width: 25%;
+            height: 600px;
+        }
+        
+        .main-content {
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="relative top-0 left-0 w-full py-4 z-50">
+        <!-- Navigation Bar -->
+        <nav class="top-10 bg-black w-full max-w-5xl mx-auto flex items-center justify-between py-3 px-8 rounded-lg shadow-md">
+            <!-- Logo Section -->
+            <div class="flex items-center space-x-2">
+                <img src="https://iconape.com/wp-content/png_logo_vector/kwap-malaysia-logo.png" alt="Logo" class="w-15 h-8">
+                <span class="text-lg font-bold text-white">AIvestor</span>
+            </div>
+
+             <!-- Navigation Links -->
+             <div class="flex items-center space-x-8 text-sm font-medium text-gray-300">
+                <a href="homepage.html" class="hover:text-white no-underline text-gray-300">Home</a>
+                <a href="navigationOverview.html" class="hover:text-white no-underline text-gray-300">Stock</a>
+                <a href="errorpage.html" class="hover:text-white no-underline text-gray-300">News</a>
+            </div>
+
+            <!-- Stock Search Form -->
+            <div class="relative">
+                <form id="stockSearchForm" class="flex items-center bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 shadow-lg transition-all duration-200 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input id="stockSearch" name="symbol" type="text" placeholder="Search for symbol or company..." autocomplete="off" class="bg-transparent outline-none text-sm text-white placeholder-gray-400 w-full ml-3 focus:ring-0">
+                    <div id="loadingSpinner" class="hidden">
+                        <svg class="animate-spin h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </div>
+                </form>
+
+                <div id="searchResults" class="hidden absolute mt-2 w-full bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden transition-all duration-200 transform origin-top">
+                    <!-- Results will be populated here -->
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="mt-10 w-full px-8">
+        <!-- Stock Detail Layout Container -->
+        <div class="max-w-7xl mx-auto content-container">
+            <!-- Sidebar -->
+            <aside class="sidebar bg-gradient-to-b from-gray-900 to-gray-700 text-white shadow-md rounded-l-lg pt-8 pb-8 pr-6 pl-6">
+                <ul class="space-y-2">
+                    <li class="sidebar-item active flex items-center space-x-2 px-2 py-2 rounded-lg cursor-pointer transition-colors border border-gray-300">
+                        <a href="navigationOverview.html" class="nav-link text-white">
+                            <i class="fas fa-users"></i>
+                            <span>Overview</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-divider"></li>
+                    <li class="sidebar-item flex items-center space-x-2 px-4 py-2 rounded-lg cursor-pointer transition-colors border border-gray-300">
+                        <a href="navigationFundamental.html" class="nav-link text-white">
+                            <i class="fas fa-users"></i>
+                            <span>Fundamental</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-divider"></li>
+                    <li class="sidebar-item flex items-center space-x-2 px-4 py-2 rounded-lg cursor-pointer transition-colors border border-gray-300">
+                        <a href="errorpage.html" class="nav-link text-white">
+                            <i class="far fa-newspaper"></i>
+                            <span>News</span>
+                            <span class="italic text-sm"><br/>*AI Powered</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-divider"></li>
+                    <li class="sidebar-item flex items-center space-x-2 px-4 py-2 rounded-lg cursor-pointer transition-colors border border-gray-300">
+                        <a href="newstockprediction.html" class="nav-link text-white">
+                            <i class="far fa-newspaper"></i>
+                            <span>prediction</span>
+                            <span class="italic text-sm"><br/>*AI Powered</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-divider"></li>
+                    <li class="sidebar-item flex items-center space-x-2 px-4 py-2 rounded-lg cursor-pointer transition-colors border border-gray-300">
+                        <a href="errorpage.html" class="nav-link text-white">
+                            <i class="fas fa-history"></i>
+                            <span>Historical Data</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-divider"></li>
+                    <li class="sidebar-item flex items-center space-x-2 px-4 py-2 rounded-lg cursor-pointer transition-colors border border-gray-300">
+                        <a href="errorpage.html" class="nav-link text-white">
+                            <i class="fas fa-building"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-divider"></li>
+                    <li class="sidebar-item flex items-center space-x-2 px-4 py-2 rounded-lg cursor-pointer transition-colors border border-gray-300">
+                        <a href="errorpage.html" class="nav-link text-white">
+                            <i class="fas fa-gavel"></i>
+                            <span>Option</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-divider"></li>
+                    <li class="sidebar-item flex items-center space-x-2 px-4 py-2 rounded-lg cursor-pointer transition-colors border border-gray-300">
+                        <a href="/stockHolder/{{ symbol }}" class="nav-link text-white">
+                            <i class="fas fa-user-friends"></i>
+                            <span>Holder</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-divider"></li>
+                </ul>
+            </aside>
+
+            <!-- Main Content Section -->
+            <div class="main-content bg-white border border-gray-300 rounded-r-lg shadow-md p-8 h-auto mb-8">
+                <div class="mb-8 bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                    <div class="tradingview-widget-container">
+                        <div class="tradingview-widget-container__widget"></div>
+                        <script type="text/javascript">
+                            var widget = document.createElement('script');
+                            widget.type = 'text/javascript';
+                            widget.async = true;
+                            widget.src = "https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js";
+                            widget.innerText = JSON.stringify({
+                                symbol: "AAPL",
+                                width: "100%",
+                                locale: "en",
+                                colorTheme: "light",
+                                isTransparent: true
+                            });
+                            document.querySelector('.tradingview-widget-container').appendChild(widget);
+                        </script>
+                    </div>
+                </div>
+                
+            
+                    <!-- Bento Grid Layout -->
+                    <div class="bento-grid">
+                        <!-- Institution Ownership -->
+                        <section class="span-12 data-card bg-white p-6 rounded-xl shadow-md border border-sky-100 mx-4">
+                            <h2 class="text-xl font-semibold text-sky-950 mb-4 flex items-center">
+                                <i class="fas fa-building text-sky-700 mr-2"></i> Institution Ownership
+                            </h2>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full text-left text-gray-600">
+                                    <thead class="bg-sky-950 text-white">
+                                        <tr>
+                                            <th class="py-3 px-4 rounded-tl-lg">Institution</th>
+                                            <th class="py-3 px-4">Percent Held</th>
+                                            <th class="py-3 px-4">Position</th>
+                                            <th class="py-3 px-4 rounded-tr-lg">Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-sky-100 hover:bg-sky-50">
+                                            <td class="py-3 px-4">Vanguard Group Inc.</td>
+                                            <td class="py-3 px-4">8.2%</td>
+                                            <td class="py-3 px-4">1,280,347,000</td>
+                                            <td class="py-3 px-4">$233.8B</td>
+                                        </tr>
+                                        <tr class="border-b border-sky-100 hover:bg-sky-50">
+                                            <td class="py-3 px-4">BlackRock Inc.</td>
+                                            <td class="py-3 px-4">6.4%</td>
+                                            <td class="py-3 px-4">998,456,000</td>
+                                            <td class="py-3 px-4">$182.3B</td>
+                                        </tr>
+                                        <tr class="border-b border-sky-100 hover:bg-sky-50">
+                                            <td class="py-3 px-4">State Street Corporation</td>
+                                            <td class="py-3 px-4">3.8%</td>
+                                            <td class="py-3 px-4">592,307,000</td>
+                                            <td class="py-3 px-4">$108.2B</td>
+                                        </tr>
+                                        <tr class="hover:bg-sky-50">
+                                            <td class="py-3 px-4">Fidelity Management & Research</td>
+                                            <td class="py-3 px-4">2.9%</td>
+                                            <td class="py-3 px-4">452,183,000</td>
+                                            <td class="py-3 px-4">$82.6B</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+            
+                        <!-- Fund Ownership -->
+                        <section class="span-8 data-card bg-white p-6 rounded-xl shadow-md border border-sky-100 my-4">
+                            <h2 class="text-xl font-semibold text-sky-950 mb-4 flex items-center">
+                                <i class="fas fa-users text-sky-700 mr-2"></i> Fund Ownership
+                            </h2>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full text-left text-gray-600" id="fundOwnershipTable">
+                                    <thead class="bg-sky-950 text-white">
+                                        <tr>
+                                            <th class="py-3 px-4 rounded-tl-lg">Fund Name</th>
+                                            <th class="py-3 px-4">Percent Held</th>
+                                            <th class="py-3 px-4">Position</th>
+                                            <th class="py-3 px-4 rounded-tr-lg">Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="fund-row border-b border-sky-100 hover:bg-sky-50">
+                                            <td class="py-3 px-4">Vanguard Total Stock Market ETF</td>
+                                            <td class="py-3 px-4">2.8%</td>
+                                            <td class="py-3 px-4">436,120,000</td>
+                                            <td class="py-3 px-4">$79.6B</td>
+                                        </tr>
+                                        <tr class="fund-row border-b border-sky-100 hover:bg-sky-50">
+                                            <td class="py-3 px-4">Vanguard 500 Index Fund</td>
+                                            <td class="py-3 px-4">2.1%</td>
+                                            <td class="py-3 px-4">327,420,000</td>
+                                            <td class="py-3 px-4">$59.8B</td>
+                                        </tr>
+                                        <tr class="fund-row border-b border-sky-100 hover:bg-sky-50">
+                                            <td class="py-3 px-4">SPDR S&P 500 ETF Trust</td>
+                                            <td class="py-3 px-4">1.7%</td>
+                                            <td class="py-3 px-4">265,122,000</td>
+                                            <td class="py-3 px-4">$48.4B</td>
+                                        </tr>
+                                        <tr class="fund-row hidden border-b border-sky-100 hover:bg-sky-50">
+                                            <td class="py-3 px-4">Invesco QQQ Trust</td>
+                                            <td class="py-3 px-4">1.6%</td>
+                                            <td class="py-3 px-4">249,537,000</td>
+                                            <td class="py-3 px-4">$45.6B</td>
+                                        </tr>
+                                        <tr class="fund-row hidden border-b border-sky-100 hover:bg-sky-50">
+                                            <td class="py-3 px-4">iShares Core S&P 500 ETF</td>
+                                            <td class="py-3 px-4">1.4%</td>
+                                            <td class="py-3 px-4">218,325,000</td>
+                                            <td class="py-3 px-4">$39.9B</td>
+                                        </tr>
+                                        <tr class="fund-row hidden hover:bg-sky-50">
+                                            <td class="py-3 px-4">Fidelity 500 Index Fund</td>
+                                            <td class="py-3 px-4">0.8%</td>
+                                            <td class="py-3 px-4">124,674,000</td>
+                                            <td class="py-3 px-4">$22.8B</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+            
+                                <!-- Pagination Controls -->
+                                <div class="flex justify-center mt-4 space-x-2">
+                                    <button id="prevBtn" class="px-4 py-2 bg-sky-100 text-sky-800 rounded-lg hover:bg-sky-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <i class="fas fa-chevron-left mr-1"></i> Previous
+                                    </button>
+                                    <button id="nextBtn" class="px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-800 disabled:opacity-50 disabled:cursor-not-allowed">
+                                        Next <i class="fas fa-chevron-right ml-1"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+            
+                        <!-- Insider Holders -->
+                        <section class="span-4 data-card bg-white p-6 rounded-xl shadow-md border border-sky-100 my-4">
+                            <h2 class="text-xl font-semibold text-sky-950 mb-4 flex items-center">
+                                <i class="fas fa-user-secret text-sky-700 mr-2"></i> Insider Holders
+                            </h2>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full text-left text-gray-600">
+                                    <thead class="bg-sky-950 text-white">
+                                        <tr>
+                                            <th class="py-3 px-4 rounded-tl-lg">Holder</th>
+                                            <th class="py-3 px-4 rounded-tr-lg">Shares Held</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-sky-100 hover:bg-sky-50">
+                                            <td class="py-3 px-4">Timothy Cook</td>
+                                            <td class="py-3 px-4">3,280,052</td>
+                                        </tr>
+                                        <tr class="border-b border-sky-100 hover:bg-sky-50">
+                                            <td class="py-3 px-4">Jeffrey Williams</td>
+                                            <td class="py-3 px-4">489,260</td>
+                                        </tr>
+                                        <tr class="border-b border-sky-100 hover:bg-sky-50">
+                                            <td class="py-3 px-4">Katherine Adams</td>
+                                            <td class="py-3 px-4">427,522</td>
+                                        </tr>
+                                        <tr class="hover:bg-sky-50">
+                                            <td class="py-3 px-4">Deirdre O'Brien</td>
+                                            <td class="py-3 px-4">136,290</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+            
+                        <!-- Insider Transactions -->
+                        <section class="span-12 data-card bg-white p-6 rounded-xl shadow-md border border-sky-100">
+                            <h2 class="text-xl font-semibold text-sky-950 mb-4 flex items-center">
+                                <i class="fas fa-exchange-alt text-sky-700 mr-2"></i> Insider Transactions
+                            </h2>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full text-left text-gray-600">
+                                    <thead class="bg-sky-950 text-white">
+                                        <tr>
+                                            <th class="py-3 px-4 rounded-tl-lg">Transaction Date</th>
+                                            <th class="py-3 px-4">Insider Name</th>
+                                            <th class="py-3 px-4">Transaction Type</th>
+                                            <th class="py-3 px-4">Shares Traded</th>
+                                            <th class="py-3 px-4 rounded-tr-lg">Ownership</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-sky-100 hover:bg-sky-50">
+                                            <td class="py-3 px-4">2025-05-01</td>
+                                            <td class="py-3 px-4">Timothy Cook</td>
+                                            <td class="py-3 px-4"><span class="text-red-600">Sale</span></td>
+                                            <td class="py-3 px-4">75,000</td>
+                                            <td class="py-3 px-4">Direct</td>
+                                        </tr>
+                                        <tr class="border-b border-sky-100 hover:bg-sky-50">
+                                            <td class="py-3 px-4">2025-04-25</td>
+                                            <td class="py-3 px-4">Katherine Adams</td>
+                                            <td class="py-3 px-4"><span class="text-red-600">Sale</span></td>
+                                            <td class="py-3 px-4">42,300</td>
+                                            <td class="py-3 px-4">Direct</td>
+                                        </tr>
+                                        <tr class="border-b border-sky-100 hover:bg-sky-50">
+                                            <td class="py-3 px-4">2025-04-15</td>
+                                            <td class="py-3 px-4">Deirdre O'Brien</td>
+                                            <td class="py-3 px-4"><span class="text-green-600">Buy</span></td>
+                                            <td class="py-3 px-4">15,200</td>
+                                            <td class="py-3 px-4">Direct</td>
+                                        </tr>
+                                        <tr class="hover:bg-sky-50">
+                                            <td class="py-3 px-4">2025-04-10</td>
+                                            <td class="py-3 px-4">Jeffrey Williams</td>
+                                            <td class="py-3 px-4"><span class="text-red-600">Sale</span></td>
+                                            <td class="py-3 px-4">25,760</td>
+                                            <td class="py-3 px-4">Direct</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+              
+            </div>
+        </div>
+    </main>
+
+    <!-- Stock Search Script -->
+    <script>
+        const searchInput = document.getElementById('stockSearch');
+        const searchResults = document.getElementById('searchResults');
+        const searchForm = document.getElementById('stockSearchForm');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        
+        // Replace with your Alpha Vantage API key
+        const ALPHA_VANTAGE_API_KEY = 'O3ZF8D6FGHDFMFXT';
+        
+        let selectedIndex = -1;
+        let currentResults = [];
+        
+        async function fetchStockData(query) {
+            if (!query) return [];
+            
+            try {
+                showLoading();
+                const response = await fetch(`https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${encodeURIComponent(query)}&apikey=${ALPHA_VANTAGE_API_KEY}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+        
+                if (data.bestMatches) {
+                    return data.bestMatches.map(match => ({
+                        symbol: match['1. symbol'],
+                        name: match['2. name'],
+                        type: match['3. type'],
+                        region: match['4. region']
+                    }));
+                }
+                return [];
+            } catch (error) {
+                console.error('Error fetching stock data:', error);
+                showError('Failed to fetch results. Please try again.');
+                return [];
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        function showError(message) {
+            searchResults.innerHTML = `
+                <div class="px-4 py-3 text-red-400 text-center text-sm">
+                    ${message}
+                </div>`;
+            searchResults.classList.remove('hidden');
+        }
+        
+        function displayResults(results) {
+            currentResults = results;
+            searchResults.innerHTML = '';
+            selectedIndex = -1;
+            
+            if (results.length === 0) {
+                searchResults.innerHTML = `
+                    <div class="px-4 py-3 text-gray-400 text-center text-sm">
+                        No results found
+                    </div>`;
+                return;
+            }
+        
+            // Filter for US stocks only (optional)
+            const filteredResults = results.filter(stock => stock.region === 'United States');
+        
+            filteredResults.forEach((stock, index) => {
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'result-item px-4 py-3 hover:bg-gray-700 cursor-pointer transition-colors duration-150';
+                resultDiv.setAttribute('data-index', index);
+                
+                if (index !== filteredResults.length - 1) {
+                    resultDiv.className += ' border-b border-gray-700';
+                }
+                
+                resultDiv.innerHTML = `
+                    <div class="flex items-start justify-between group">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-white font-semibold">${stock.symbol}</span>
+                                <span class="stock-badge">${stock.type}</span>
+                            </div>
+                            <div class="text-gray-400 text-sm mt-0.5 truncate">
+                                ${stock.name}
+                            </div>
+                        </div>
+                        <div class="ml-4 flex items-center">
+                            <svg class="hover-icon w-4 h-4 text-gray-500 opacity-0 transform translate-x-2 transition-all duration-200" 
+                                 fill="none" 
+                                 stroke="currentColor" 
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" 
+                                      stroke-linejoin="round" 
+                                      stroke-width="2" 
+                                      d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4">
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+                `;
+                
+                resultDiv.addEventListener('click', () => handleStockSelection(stock));
+                resultDiv.addEventListener('mouseenter', () => {
+                    updateSelectedIndex(index);
+                });
+                
+                searchResults.appendChild(resultDiv);
+            });
+        
+            searchResults.classList.remove('hidden');
+            searchResults.classList.add('show');
+        }
+        
+        function handleStockSelection(stock) {
+            searchInput.value = stock.symbol;
+            hideResults();
+            // Navigate to stock overview page
+            window.location.href = `/stockOverview/${stock.symbol}`;
+        }
+        
+        function updateSelectedIndex(index) {
+            const items = searchResults.querySelectorAll('.result-item');
+            items.forEach(item => item.classList.remove('selected'));
+            
+            if (index >= 0 && index < items.length) {
+                selectedIndex = index;
+                items[index].classList.add('selected');
+                items[index].scrollIntoView({ block: 'nearest' });
+            }
+        }
+        
+        function showLoading() {
+            loadingSpinner.classList.remove('hidden');
+        }
+        
+        function hideLoading() {
+            loadingSpinner.classList.add('hidden');
+        }
+        
+        function hideResults() {
+            searchResults.classList.add('hidden');
+            searchResults.classList.remove('show');
+        }
+        
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+        
+        const handleSearch = debounce(async (e) => {
+            const query = e.target.value.trim();
+            
+            if (query.length < 2) {
+                hideResults();
+                return;
+            }
+        
+            const results = await fetchStockData(query);
+            displayResults(results);
+        }, 300);
+        
+        // Event Listeners
+        searchInput.addEventListener('input', handleSearch);
+        
+        searchInput.addEventListener('keydown', (e) => {
+            const results = searchResults.querySelectorAll('.result-item');
+            
+            switch(e.key) {
+                case 'ArrowDown':
+                    e.preventDefault();
+                    updateSelectedIndex(Math.min(selectedIndex + 1, results.length - 1));
+                    break;
+                    
+                case 'ArrowUp':
+                    e.preventDefault();
+                    updateSelectedIndex(Math.max(selectedIndex - 1, 0));
+                    break;
+                    
+                case 'Enter':
+                    e.preventDefault();
+                    if (selectedIndex >= 0 && currentResults[selectedIndex]) {
+                        handleStockSelection(currentResults[selectedIndex]);
+                    } else if (searchInput.value.trim()) {
+                        // Direct symbol search
+                        handleStockSelection({ symbol: searchInput.value.trim().toUpperCase() });
+                    }
+                    break;
+                    
+                case 'Escape':
+                    hideResults();
+                    break;
+            }
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (!searchForm.contains(e.target) && !searchResults.contains(e.target)) {
+                hideResults();
+            }
+        });
+        
+        searchInput.addEventListener('focus', () => {
+            if (searchInput.value.trim().length >= 2) {
+                handleSearch({ target: searchInput });
+            }
+        });
+        
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const symbol = searchInput.value.trim().toUpperCase();
+            if (symbol) {
+                handleStockSelection({ symbol });
+            }
+        });
+    </script>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
