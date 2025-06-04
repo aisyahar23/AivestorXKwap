@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIvestor - Finance News Insights</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'midnight': {
+                            30: '#e0f2fe',
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617'
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+        
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Glass effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-midnight-50 via-white to-midnight-100 text-midnight-900">
+    <!-- Header -->
+    <header class="fixed top-0 left-0 w-full z-50 bg-midnight-900 backdrop-blur-lg border-b border-midnight-800">
+        <nav class="w-full flex items-center justify-between py-4 px-6">
+            <!-- Logo Section -->
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-13 h-12 bg-white rounded-xl flex items-center justify-center px-2 shadow-lg">
+                       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIq1WbbGOKt4luovAyHPvUP_BUFvf7iNP4NQ&s" alt="Logo" class="w-25 h-8"/>
+                    </div>
+                    <div>
+                        <span class="text-2xl text-white font-bold">AIvestor</span>
+                        <div class="text-sm text-slate-400">Financial Market Forecasting</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Navigation -->
+            <div class="hidden md:flex items-center space-x-2">
+                <a href="#" class="flex items-center space-x-2 px-6 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-midnight-800 transition-all duration-300">
+                    <i class="fas fa-home"></i>
+                    <span class="font-semibold">Home</span>
+                </a>
+                <a href="#" class="flex items-center space-x-2 px-6 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-midnight-800 transition-all duration-300">
+                    <i class="fas fa-chart-bar"></i>
+                    <span class="font-semibold">Stocks</span>
+                </a>
+                <a href="#" class="flex items-center space-x-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg transition-all duration-300 hover:shadow-xl">
+                    <i class="fas fa-newspaper"></i>
+                    <span class="font-semibold">News</span>
+                </a>
+            </div>
+
+            <!-- Search and User Section -->
+            <div class="flex items-center space-x-4">
+                <!-- Quick Search -->
+                <div class="hidden lg:block relative">
+                    <div class="bg-midnight-800 rounded-xl px-4 py-3 flex items-center space-x-3 min-w-64 border border-midnight-700 hover:border-midnight-600 transition-colors">
+                        <i class="fas fa-search text-gray-400"></i>
+                        <input id="headerSearch" type="text" placeholder="Search stocks..."
+                                class="bg-transparent outline-none text-white placeholder-gray-400 flex-1">
+                    </div>
+                </div>
+
+                <!-- User Menu -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center border-2 border-white/20 hover:scale-110 transition-transform cursor-pointer shadow-lg">
+                        <i class="fas fa-user text-white text-lg"></i>
+                    </div>
+                    <button class="hidden md:flex items-center space-x-2 px-4 py-3 text-red-400 hover:bg-red-950 rounded-xl transition-all duration-300 border border-red-800 hover:border-red-600">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="font-semibold">Logout</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-8 px-4 md:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <!-- Page Header with Stats -->
+            <div class="mb-10">
+                <h1 class="text-4xl font-bold text-midnight-900 mb-3">
+                    Market <span class="gradient-text">Sentiment Analysis</span>
+                </h1>
+                <p class="text-midnight-600 text-lg mb-6">Real-time financial news analysis with AI-powered sentiment scoring</p>
+                
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                    <div class="glass rounded-2xl p-4 border border-midnight-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-midnight-600">Total Articles</p>
+                                <p class="text-2xl font-bold text-midnight-900">1,247</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-newspaper text-blue-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass rounded-2xl p-4 border border-midnight-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-midnight-600">Positive Sentiment</p>
+                                <p class="text-2xl font-bold text-green-600">68%</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-arrow-trend-up text-green-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass rounded-2xl p-4 border border-midnight-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-midnight-600">Neutral Sentiment</p>
+                                <p class="text-2xl font-bold text-blue-600">24%</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-minus text-blue-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass rounded-2xl p-4 border border-midnight-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-midnight-600">Negative Sentiment</p>
+                                <p class="text-2xl font-bold text-red-600">8%</p>
+                            </div>
+                            <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-arrow-trend-down text-red-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Filters -->
+            <div class="glass rounded-2xl shadow-lg border border-midnight-200 p-6 mb-8">
+                <div class="flex flex-wrap items-end gap-4">
+                    <div class="flex-1 min-w-[280px]">
+                        <label class="block text-sm font-semibold text-midnight-700 mb-2">
+                            <i class="fas fa-calendar-days mr-1"></i>Date Range
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <div class="relative flex-1">
+                                <input type="date" class="w-full px-4 py-3 bg-white border border-midnight-300 rounded-xl text-midnight-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                            <span class="text-midnight-600 font-medium">to</span>
+                            <div class="relative flex-1">
+                                <input type="date" class="w-full px-4 py-3 bg-white border border-midnight-300 rounded-xl text-midnight-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="min-w-[200px]">
+                        <label class="block text-sm font-semibold text-midnight-700 mb-2">
+                            <i class="fas fa-face-smile mr-1"></i>Sentiment Filter
+                        </label>
+                        <select class="w-full px-4 py-3 bg-white border border-midnight-300 rounded-xl text-midnight-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer">
+                            <option>All Sentiments</option>
+                            <option>Positive Only</option>
+                            <option>Neutral Only</option>
+                            <option>Negative Only</option>
+                        </select>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button class="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl hover:shadow-xl transition-all duration-300 flex items-center gap-2">
+                            <i class="fas fa-filter"></i>Apply Filters
+                        </button>
+                        <button class="px-6 py-3 bg-midnight-200 text-midnight-700 font-semibold rounded-xl hover:bg-midnight-300 transition-all duration-300">
+                            <i class="fas fa-rotate-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- News Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                <!-- News Card 1 -->
+                <article class="bg-white rounded-2xl shadow-lg border border-midnight-200 overflow-hidden hover:shadow-2xl transition-all duration-300 group">
+                    <div class="p-6">
+                        <!-- Header with Time -->
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <span class="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-bold rounded-lg shadow-sm">AAPL</span>
+                                <div class="flex items-center text-xs text-midnight-500">
+                                    <i class="far fa-clock mr-1"></i>
+                                    <span>2 hours ago</span>
+                                </div>
+                            </div>
+                            <button class="text-midnight-400 hover:text-midnight-700 transition-colors">
+                                <i class="far fa-bookmark"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Title -->
+                        <h3 class="text-xl font-bold text-midnight-900 mb-4 group-hover:text-blue-600 transition-colors line-clamp-2">
+                            Apple Reports Record Q4 Earnings, Beats Analyst Expectations by 15%
+                        </h3>
+                        
+                        <!-- Dual Sentiment Analysis -->
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <!-- FinBERT Analysis -->
+                            <div class="bg-gradient-to-br from-midnight-50 to-midnight-100 rounded-xl p-4 border border-midnight-200">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="text-xs font-bold text-midnight-700 uppercase tracking-wider">FinBERT</h4>
+                                    <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-bold rounded-md">Positive</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between text-xs mb-1">
+                                                <span class="text-midnight-600 font-medium">Pos</span>
+                                                <span class="font-bold text-green-600">78%</span>
+                                            </div>
+                                            <div class="w-full bg-midnight-200 rounded-full h-1.5">
+                                                <div class="bg-gradient-to-r from-green-400 to-green-600 h-1.5 rounded-full" style="width: 78%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between text-xs mb-1">
+                                                <span class="text-midnight-600 font-medium">Neu</span>
+                                                <span class="font-bold text-blue-600">18%</span>
+                                            </div>
+                                            <div class="w-full bg-midnight-200 rounded-full h-1.5">
+                                                <div class="bg-gradient-to-r from-blue-400 to-blue-600 h-1.5 rounded-full" style="width: 18%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between text-xs mb-1">
+                                                <span class="text-midnight-600 font-medium">Neg</span>
+                                                <span class="font-bold text-red-600">4%</span>
+                                            </div>
+                                            <div class="w-full bg-midnight-200 rounded-full h-1.5">
+                                                <div class="bg-gradient-to-r from-red-400 to-red-600 h-1.5 rounded-full" style="width: 4%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- BERT Analysis -->
+                            <div class="bg-gradient-to-br from-midnight-50 to-midnight-100 rounded-xl p-4 border border-midnight-200">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="text-xs font-bold text-midnight-700 uppercase tracking-wider">BERT</h4>
+                                    <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-bold rounded-md">Positive</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between text-xs mb-1">
+                                                <span class="text-midnight-600 font-medium">Pos</span>
+                                                <span class="font-bold text-green-600">82%</span>
+                                            </div>
+                                            <div class="w-full bg-midnight-200 rounded-full h-1.5">
+                                                <div class="bg-gradient-to-r from-green-400 to-green-600 h-1.5 rounded-full" style="width: 82%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between text-xs mb-1">
+                                                <span class="text-midnight-600 font-medium">Neu</span>
+                                                <span class="font-bold text-blue-600">15%</span>
+                                            </div>
+                                            <div class="w-full bg-midnight-200 rounded-full h-1.5">
+                                                <div class="bg-gradient-to-r from-blue-400 to-blue-600 h-1.5 rounded-full" style="width: 15%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between text-xs mb-1">
+                                                <span class="text-midnight-600 font-medium">Neg</span>
+                                                <span class="font-bold text-red-600">3%</span>
+                                            </div>
+                                            <div class="w-full bg-midnight-200 rounded-full h-1.5">
+                                                <div class="bg-gradient-to-r from-red-400 to-red-600 h-1.5 rounded-full" style="width: 3%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex items-center justify-between pt-4 border-t border-midnight-100">
+                            <a href="#" class="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold text-sm group">
+                                <span>Read Full Article</span>
+                                <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                            </a>
+                            <div class="flex items-center gap-2">
+                                <button class="p-2 text-midnight-400 hover:text-midnight-700 hover:bg-midnight-100 rounded-lg transition-all">
+                                    <i class="far fa-share-square"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- News Card 2 -->
+                <article class="bg-white rounded-2xl shadow-lg border border-midnight-200 overflow-hidden hover:shadow-2xl transition-all duration-300 group">
+                    <div class="p-6">
+                        <!-- Header with Time -->
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <span class="px-3 py-1.5 bg-gradient-to-r from-purple-500 to-purple-600 text-white text-xs font-bold rounded-lg shadow-sm">TSLA</span>
+                                <div class="flex items-center text-xs text-midnight-500">
+                                    <i class="far fa-clock mr-1"></i>
+                                    <span>4 hours ago</span>
+                                </div>
+                            </div>
+                            <button class="text-midnight-400 hover:text-midnight-700 transition-colors">
+                                <i class="far fa-bookmark"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Title -->
+                        <h3 class="text-xl font-bold text-midnight-900 mb-4 group-hover:text-blue-600 transition-colors line-clamp-2">
+                            Tesla Announces New Gigafactory Location in Southeast Asia
+                        </h3>
+                        
+                        <!-- Dual Sentiment Analysis -->
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <!-- FinBERT Analysis -->
+                            <div class="bg-gradient-to-br from-midnight-50 to-midnight-100 rounded-xl p-4 border border-midnight-200">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="text-xs font-bold text-midnight-700 uppercase tracking-wider">FinBERT</h4>
+                                    <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-md">Neutral</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between text-xs mb-1">
+                                                <span class="text-midnight-600 font-medium">Pos</span>
+                                                <span class="font-bold text-green-600">45%</span>
+                                            </div>
+                                            <div class="w-full bg-midnight-200 rounded-full h-1.5">
+                                                <div class="bg-gradient-to-r from-green-400 to-green-600 h-1.5 rounded-full" style="width: 45%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between text-xs mb-1">
+                                                <span class="text-midnight-600 font-medium">Neu</span>
+                                                <span class="font-bold text-blue-600">48%</span>
+                                            </div>
+                                            <div class="w-full bg-midnight-200 rounded-full h-1.5">
+                                                <div class="bg-gradient-to-r from-blue-400 to-blue-600 h-1.5 rounded-full" style="width: 48%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between text-xs mb-1">
+                                                <span class="text-midnight-600 font-medium">Neg</span>
+                                                <span class="font-bold text-red-600">7%</span>
+                                            </div>
+                                            <div class="w-full bg-midnight-200 rounded-full h-1.5">
+                                                <div class="bg-gradient-to-r from-red-400 to-red-600 h-1.5 rounded-full" style="width: 7%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- BERT Analysis -->
+                            <div class="bg-gradient-to-br from-midnight-50 to-midnight-100 rounded-xl p-4 border border-midnight-200">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="text-xs font-bold text-midnight-700 uppercase tracking-wider">BERT</h4>
+                                    <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-bold rounded-md">Positive</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between text-xs mb-1">
+                                                <span class="text-midnight-600 font-medium">Pos</span>
+                                                <span class="font-bold text-green-600">52%</span>
+                                            </div>
+                                            <div class="w-full bg-midnight-200 rounded-full h-1.5">
+                                                <div class="bg-gradient-to-r from-green-400 to-green-600 h-1.5 rounded-full" style="width: 52%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between text-xs mb-1">
+                                                <span class="text-midnight-600 font-medium">Neu</span>
+                                                <span class="font-bold text-blue-600">38%</span>
+                                            </div>
+                                            <div class="w-full bg-midnight-200 rounded-full h-1.5">
+                                                <div class="bg-gradient-to-r from-blue-400 to-blue-600 h-1.5 rounded-full" style="width: 38%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between text-xs mb-1">
+                                                <span class="text-midnight-600 font-medium">Neg</span>
+                                                <span class="font-bold text-red-600">10%</span>
+                                            </div>
+                                            <div class="w-full bg-midnight-200 rounded-full h-1.5">
+                                                <div class="bg-gradient-to-r from-red-400 to-red-600 h-1.5 rounded-full" style="width: 10%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex items-center justify-between pt-4 border-t border-midnight-100">
+                            <a href="#" class="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold text-sm group">
+                                <span>Read Full Article</span>
+                                <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                            </a>
+                            <div class="flex items-center gap-2">
+                                <button class="p-2 text-midnight-400 hover:text-midnight-700 hover:bg-midnight-100 rounded-lg transition-all">
+                                    <i class="far fa-share-square"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- News Card 3 -->
+                <article class="bg-white rounded-2xl shadow-lg border border-midnight-200 overflow-hidden hover:shadow-2xl transition-all duration-300 group">
+                    <div class="p-6">
+                        <!-- Header with Time -->
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <span class="px-3 py-1.5 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold rounded-lg shadow-sm">META</span>
+                                <div class="flex items-center text-xs text-midnight-500">
+                                    <i class="far fa-clock mr-1"></i>
+                                    <span>6 hours ago</span>
+                                </div>
+                            </div>
+                            <button class="text-midnight-400 hover:text-midnight-700 transition-colors">
+                                <i class="far fa-bookmark"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Title -->
+                        <h3 class="text-xl font-bold text-midnight-900 mb-4 group-hover:text-blue-600 transition-colors line-clamp-2">
+                            Meta Faces Regulatory Challenges in European Markets Over Data Privacy
+                        </h3>
+                        
+                        <!-- Dual Sentiment Analysis -->
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <!-- FinBERT Analysis -->
+                            <div class="bg-gradient-to-br from-midnight-50 to-midnight-100 rounded-xl p-4 border border-midnight-200">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="text-xs font-bold text-midnight-700 uppercase tracking-wider">FinBERT</h4>
+                                    <span class="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-bold rounded-md">Negative</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between text-xs mb-1">
+                                                <span class="text-midnight-600 font-medium">Pos</span>
+                                                <span class="font-bold text-green-600">12%</span>
+                                            </div>
+                                            <div class="w-full bg-midnight-200 rounded-full h-1.5">
+                                                <div class="bg-gradient-to-r from-green-400 to-green-600 h-1.5 rounded-full" style="width: 12%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between text-xs mb-1">
+                                                <span class="text-midnight-600 font-medium">Neu</span>
+                                                <span class="font-bold text-blue-600">23%</span>
+                                            </div>
+                                            <div class="w-full bg-midnight-200 rounded-full h-1.5">
+                                                <div class="bg-gradient-to-r from-blue-400 to-blue-600 h-1.5 rounded-full" style="width: 23%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between text-xs mb-1">
+                                                <span class="text-midnight-600 font-medium">Neg</span>
+                                                <span class="font-bold text-red-600">65%</span>
+                                            </div>
+                                            <div class="w-full bg-midnight-200 rounded-full h-1.5">
+                                                <div class="bg-gradient-to-r from-red-400 to-red-600 h-1.5 rounded-full" style="width: 65%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- BERT Analysis -->
+                            <div class="bg-gradient-to-br from-midnight-50 to-midnight-100 rounded-xl p-4 border border-midnight-200">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="text-xs font-bold text-midnight-700 uppercase tracking-wider">BERT</h4>
+                                    <span class="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-bold rounded-md">Negative</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between text-xs mb-1">
+                                                <span class="text-midnight-600 font-medium">Pos</span>
+                                                <span class="font-bold text-green-600">18%</span>
+                                            </div>
+                                            <div class="w-full bg-midnight-200 rounded-full h-1.5">
+                                                <div class="bg-gradient-to-r from-green-400 to-green-600 h-1.5 rounded-full" style="width: 18%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between text-xs mb-1">
+                                                <span class="text-midnight-600 font-medium">Neu</span>
+                                                <span class="font-bold text-blue-600">27%</span>
+                                            </div>
+                                            <div class="w-full bg-midnight-200 rounded-full h-1.5">
+                                                <div class="bg-gradient-to-r from-blue-400 to-blue-600 h-1.5 rounded-full" style="width: 27%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between text-xs mb-1">
+                                                <span class="text-midnight-600 font-medium">Neg</span>
+                                                <span class="font-bold text-red-600">55%</span>
+                                            </div>
+                                            <div class="w-full bg-midnight-200 rounded-full h-1.5">
+                                                <div class="bg-gradient-to-r from-red-400 to-red-600 h-1.5 rounded-full" style="width: 55%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex items-center justify-between pt-4 border-t border-midnight-100">
+                            <a href="#" class="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold text-sm group">
+                                <span>Read Full Article</span>
+                                <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                            </a>
+                            <div class="flex items-center gap-2">
+                                <button class="p-2 text-midnight-400 hover:text-midnight-700 hover:bg-midnight-100 rounded-lg transition-all">
+                                    <i class="far fa-share-square"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- More cards... -->
+                <!-- You can duplicate the above pattern for more news cards -->
+            </div>
+
+            <!-- Pagination -->
+            <div class="mt-16">
+                <div class="flex flex-col items-center space-y-6">
+                    <!-- Page Progress -->
+                    <div class="w-full max-w-2xl">
+                        <div class="flex items-center justify-between text-sm text-midnight-600 mb-2">
+                            <span class="font-medium">Page Progress</span>
+                            <span id="paginationInfo" class="font-semibold text-midnight-900">Showing 1 of 10 pages</span>
+                        </div>
+                        <div class="w-full bg-midnight-200 rounded-full h-2 overflow-hidden">
+                            <div id="pageProgress" class="h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full transition-all duration-500" style="width: 10%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation Controls -->
+                    <div class="flex items-center space-x-2">
+                        <!-- Previous Button -->
+                        <button id="prevPage" class="p-3 rounded-xl bg-white border border-midnight-200 text-midnight-400 hover:text-midnight-900 hover:border-midnight-400 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group" disabled>
+                            <i class="fas fa-chevron-left group-hover:-translate-x-0.5 transition-transform"></i>
+                        </button>
+                        
+                        <!-- Page Numbers -->
+                        <div id="pageNumbers" class="flex items-center space-x-1">
+                            <button class="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold shadow-lg">1</button>
+                            <button class="px-4 py-2 rounded-xl bg-white border border-midnight-200 text-midnight-700 hover:bg-midnight-50 hover:border-midnight-400 transition-all">2</button>
+                            <button class="px-4 py-2 rounded-xl bg-white border border-midnight-200 text-midnight-700 hover:bg-midnight-50 hover:border-midnight-400 transition-all">3</button>
+                            <span class="px-2 text-midnight-500">...</span>
+                            <button class="px-4 py-2 rounded-xl bg-white border border-midnight-200 text-midnight-700 hover:bg-midnight-50 hover:border-midnight-400 transition-all">10</button>
+                        </div>
+                        
+                        <!-- Next Button -->
+                        <button id="nextPage" class="p-3 rounded-xl bg-white border border-midnight-200 text-midnight-700 hover:text-midnight-900 hover:border-midnight-400 transition-all duration-300 group">
+                            <i class="fas fa-chevron-right group-hover:translate-x-0.5 transition-transform"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Items Per Page -->
+                    <div class="flex items-center space-x-3">
+                        <span class="text-sm text-midnight-600 font-medium">Show</span>
+                        <div class="relative">
+                            <select id="itemsPerPage" class="appearance-none bg-white text-midnight-900 px-4 py-2 pr-10 rounded-xl border border-midnight-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-semibold cursor-pointer hover:border-midnight-400 transition-colors">
+                                <option value="20" selected>20</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-midnight-400 pointer-events-none text-sm"></i>
+                        </div>
+                        <span class="text-sm text-midnight-600 font-medium">articles per page</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-20 bg-midnight-900 text-white py-8 px-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <p class="text-sm text-midnight-400">© 2024 AIvestor. All rights reserved. Real-time financial data powered by AI.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // Filter reset functionality
+            const resetBtn = document.querySelector('button[class*="bg-midnight-200"]');
+            resetBtn?.addEventListener('click', function() {
+                document.querySelectorAll('input[type="date"]').forEach(input => input.value = '');
+                document.querySelector('select').selectedIndex = 0;
+            });
+
+            // Pagination functionality
+            let currentPage = 1;
+            const totalPages = 10;
+            
+            function updatePagination() {
+                // Update progress bar
+                const progress = (currentPage / totalPages) * 100;
+                document.getElementById('pageProgress').style.width = `${progress}%`;
+                
+                // Update info text
+                document.getElementById('paginationInfo').textContent = `Showing ${currentPage} of ${totalPages} pages`;
+                
+                // Update buttons
+                document.getElementById('prevPage').disabled = currentPage === 1;
+                document.getElementById('nextPage').disabled = currentPage === totalPages;
+                
+                // Update page numbers
+                const pageNumbers = document.getElementById('pageNumbers');
+                pageNumbers.innerHTML = '';
+                
+                // Always show first page
+                addPageButton(1);
+                
+                // Show dots if needed
+                if (currentPage > 3) {
+                    pageNumbers.appendChild(createDots());
+                }
+                
+                // Show current page and neighbors
+                for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+                    addPageButton(i);
+                }
+                
+                // Show dots if needed
+                if (currentPage < totalPages - 2) {
+                    pageNumbers.appendChild(createDots());
+                }
+                
+                // Always show last page
+                if (totalPages > 1) {
+                    addPageButton(totalPages);
+                }
+            }
+            
+            function addPageButton(pageNum) {
+                const button = document.createElement('button');
+                button.textContent = pageNum;
+                if (pageNum === currentPage) {
+                    button.className = 'px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold shadow-lg';
+                } else {
+                    button.className = 'px-4 py-2 rounded-xl bg-white border border-midnight-200 text-midnight-700 hover:bg-midnight-50 hover:border-midnight-400 transition-all';
+                    button.addEventListener('click', () => {
+                        currentPage = pageNum;
+                        updatePagination();
+                    });
+                }
+                document.getElementById('pageNumbers').appendChild(button);
+            }
+            
+            function createDots() {
+                const span = document.createElement('span');
+                span.className = 'px-2 text-midnight-500';
+                span.textContent = '...';
+                return span;
+            }
+            
+            // Navigation button handlers
+            document.getElementById('prevPage').addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    updatePagination();
+                }
+            });
+            
+            document.getElementById('nextPage').addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updatePagination();
+                }
+            });
+            
+            // Initialize pagination
+            updatePagination();
+
+            // Search functionality
+            const searchInput = document.getElementById('headerSearch');
+            searchInput?.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    console.log('Searching for:', searchInput.value);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIvestor - Stock Market Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif']
+                    },
+                    colors: {
+                        'midnight': {
+                            30: '#e0f2fe',
+                            50: '#f8fafc',
+                            900: '#0f172a',
+                            800: '#1e293b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .slide-in { animation: slideIn 0.4s ease-out; }
+        @keyframes slideIn { from { transform: translateX(-10px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .pulse-dot { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .number-mono { font-variant-numeric: tabular-nums; }
+    </style>
+</head>
+<body class="bg-midnight-50">
+    <!-- Overlay for mobile sidebar -->
+    <div id="overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden"></div>
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 w-full z-50 bg-midnight-900 backdrop-blur-lg border-b border-gray-200">
+        <nav class="w-full flex items-center justify-between py-4 px-6">
+            <!-- Logo Section with Sidebar Toggle -->
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-13 h-12 bg-white from-slate-900 to-slate-700 rounded-xl flex items-center justify-center px-2">
+                       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIq1WbbGOKt4luovAyHPvUP_BUFvf7iNP4NQ&s" alt="Logo"class="w-25 h-8"/>
+                    </div>
+                    <div>
+                        <span class="text-2xl text-white text-slate-900">AIvestor</span>
+                        <div class="text-sm text-slate-500">Financial Market Forecasting</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Navigation -->
+            <div class="hidden md:flex items-center space-x-2">
+                <a href="#" class="flex items-center space-x-2 px-6 py-3 rounded-xl text-slate-100 hover:text-slate-900 hover:bg-gray-100 transition-all duration-300">
+                    <i class="fas fa-home"></i>
+                    <span class="font-semibold">Home</span>
+                </a>
+                <a href="#" class="flex items-center space-x-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-sm transition-all duration-300">
+                    <i class="fas fa-chart-bar"></i>
+                    <span class="font-semibold">Stocks</span>
+                </a>
+                <a href="#" class="flex items-center space-x-2 px-6 py-3 rounded-xl text-slate-100 hover:text-slate-900 hover:bg-gray-100 transition-all duration-300">
+                    <i class="fas fa-newspaper"></i>
+                    <span class="font-semibold">News</span>
+                </a>
+            </div>
+
+            <!-- Search and User Section -->
+            <div class="flex items-center space-x-4">
+                <!-- Quick Search -->
+                <div class="hidden lg:block relative">
+                    <div class="bg-white rounded-xl px-4 py-3 flex items-center space-x-3 min-w-64 border border-gray-200 shadow-sm">
+                        <i class="fas fa-search text-gray-400"></i>
+                        <input id="headerSearch" type="text" placeholder="Search stocks..." 
+                               class="bg-transparent outline-none text-slate-900 placeholder-gray-400 flex-1">
+                    </div>
+                </div>
+
+                <!-- User Menu -->
+                <div class="flex items-center space-x-3">
+                     <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center border-2 border-white/20 hover:scale-110 transition-transform cursor-pointer">
+                        <i class="fas fa-user text-white text-lg"></i>
+                    </div>
+                    <button class="hidden md:flex items-center space-x-2 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-300 border border-red-200 hover:border-red-300">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="font-semibold">Logout</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-20">
+           <!-- Page Header with Market Overview -->
+        <div class="glass-effect bg-white/30 border-b border-gray-200 px-6 py-6">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-midnight-900 mb-2">Stock Market Overview</h1>
+                    <p class="text-gray-600">Real-time market data and analysis • Last updated: <span class="text-midnight-900 font-medium">3:42 PM</span></p>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="flex items-center space-x-2 text-sm">
+                        <span class="w-2 h-2 bg-green-500 rounded-full pulse-dot"></span>
+                        <span class="text-gray-600">Market Open</span>
+                    </span>
+                    <button class="px-4 py-2 bg-midnight-900 text-white rounded-lg hover:bg-midnight-800 transition-all duration-300 text-sm font-medium">
+                        <i class="fas fa-download mr-2"></i>Export Data
+                    </button>
+                </div>
+            </div>
+        </div>
+      
+
+        <!-- Market Controls -->
+        <div class="bg-white border-b border-gray-200 sticky top-20 z-40 shadow-sm">
+            <div class="px-8 py-4">
+                <div class="max-w-7xl mx-auto">
+                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                        <!-- Market Tabs -->
+                        <div class="flex items-center space-x-1 bg-gray-100 p-1 rounded-xl">
+                            <button onclick="switchMarket('fbm100')" class="market-tab px-6 py-2.5 rounded-lg font-medium transition-all duration-200 bg-white text-midnight-900 shadow-sm" data-market="fbm100">
+                                FBM 100
+                            </button>
+                            <button onclick="switchMarket('us')" class="market-tab px-6 py-2.5 rounded-lg font-medium transition-all duration-200 text-gray-600 hover:text-midnight-900" data-market="us">
+                                US Market
+                            </button>
+                            <button onclick="switchMarket('uk')" class="market-tab px-6 py-2.5 rounded-lg font-medium transition-all duration-200 text-gray-600 hover:text-midnight-900" data-market="uk">
+                                UK Market
+                            </button>
+                            <button onclick="switchMarket('china')" class="market-tab px-6 py-2.5 rounded-lg font-medium transition-all duration-200 text-gray-600 hover:text-midnight-900" data-market="china">
+                                China Market
+                            </button>
+                        </div>
+
+                        <!-- Filters -->
+                        <div class="flex items-center space-x-3">
+                            <div class="relative">
+                                <select id="sectorFilter" class="appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-midnight-900/20 focus:border-midnight-900 transition-all duration-200 hover:border-gray-300">
+                                    <option value="">All Sectors</option>
+                                    <option value="Technology">Technology</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="Healthcare">Healthcare</option>
+                                    <option value="Energy">Energy</option>
+                                    <option value="Consumer">Consumer</option>
+                                    <option value="Utilities">Utilities</option>
+                                    <option value="Telecom">Telecom</option>
+                                    <option value="Plantation">Plantation</option>
+                                    <option value="Materials">Materials</option>
+                                </select>
+                                <i class="fas fa-chevron-down absolute right-3 top-3.5 text-gray-400 pointer-events-none text-xs"></i>
+                            </div>
+                            <div class="relative">
+                                <select id="sortBy" class="appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-midnight-900/20 focus:border-midnight-900 transition-all duration-200 hover:border-gray-300">
+                                    <option value="ticker">Sort by Ticker</option>
+                                    <option value="company">Sort by Company</option>
+                                    <option value="sector">Sort by Sector</option>
+                                </select>
+                                <i class="fas fa-chevron-down absolute right-3 top-3.5 text-gray-400 pointer-events-none text-xs"></i>
+                            </div>
+                            <button class="px-4 py-2.5 bg-midnight-900 text-white rounded-xl hover:bg-midnight-800 transition-all duration-200 text-sm font-medium">
+                                <i class="fas fa-download mr-2"></i>Export
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stock Table -->
+        <div class="px-6 py-6">
+            <div class="max-w-8xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <!-- Table Header -->
+                    <div class="grid grid-cols-8 gap-4 px-6 py-4 bg-gray-800 border-b border-gray-200 text-sm font-semibold text-gray-200">
+                        <div class="col-span-1">#</div>
+                        <div class="col-span-2">TICKER</div>
+                        <div class="col-span-2">COMPANY</div>
+                        <div class="col-span-1">SECTOR</div>
+                        <div class="col-span-1">INDUSTRY</div>
+                        <div class="col-span-1 text-center">ACTION</div>
+                    </div>
+
+                    <!-- Stock List -->
+                    <div id="stockList" class="divide-y divide-gray-100">
+                        <!-- Stocks will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex items-center justify-between mt-6">
+                    <p class="text-sm text-gray-600">
+                        Showing <span class="font-semibold text-midnight-900">1-10</span> of <span class="font-semibold text-midnight-900">100</span> stocks
+                    </p>
+                    <div class="flex items-center space-x-2">
+                        <button class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-300">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="px-4 py-2 bg-midnight-900 text-white rounded-lg">1</button>
+                        <button class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-300">2</button>
+                        <button class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-300">3</button>
+                        <span class="px-2 text-gray-400">...</span>
+                        <button class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-300">10</button>
+                        <button class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-300">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    
+    </main>
+
+    <script>
+        // Stock data
+        const stockData = {
+            fbm100: [
+                { ticker: 'MAYBANK', company: 'Malayan Banking Bhd', sector: 'Finance', industry: 'Banking', country: 'MY' },
+                { ticker: 'CIMB', company: 'CIMB Group Holdings', sector: 'Finance', industry: 'Banking', country: 'MY' },
+                { ticker: 'TENAGA', company: 'Tenaga Nasional Bhd', sector: 'Utilities', industry: 'Electric Power', country: 'MY' },
+                { ticker: 'PBBANK', company: 'Public Bank Bhd', sector: 'Finance', industry: 'Banking', country: 'MY' },
+                { ticker: 'PETGAS', company: 'Petronas Gas Bhd', sector: 'Energy', industry: 'Oil & Gas', country: 'MY' },
+                { ticker: 'AXIATA', company: 'Axiata Group Bhd', sector: 'Telecom', industry: 'Communications', country: 'MY' },
+                { ticker: 'IOICORP', company: 'IOI Corporation Bhd', sector: 'Plantation', industry: 'Palm Oil', country: 'MY' },
+                { ticker: 'RHBBANK', company: 'RHB Bank Bhd', sector: 'Finance', industry: 'Banking', country: 'MY' },
+                { ticker: 'GENM', company: 'Genting Malaysia Bhd', sector: 'Consumer', industry: 'Gaming & Leisure', country: 'MY' },
+                { ticker: 'SIMEPLT', company: 'Sime Darby Plantation', sector: 'Plantation', industry: 'Palm Oil', country: 'MY' }
+            ],
+            us: [
+                { ticker: 'AAPL', company: 'Apple Inc.', sector: 'Technology', industry: 'Consumer Electronics', country: 'US' },
+                { ticker: 'MSFT', company: 'Microsoft Corporation', sector: 'Technology', industry: 'Software', country: 'US' },
+                { ticker: 'GOOGL', company: 'Alphabet Inc.', sector: 'Technology', industry: 'Internet Services', country: 'US' },
+                { ticker: 'AMZN', company: 'Amazon.com Inc.', sector: 'Consumer', industry: 'E-commerce', country: 'US' },
+                { ticker: 'NVDA', company: 'NVIDIA Corporation', sector: 'Technology', industry: 'Semiconductors', country: 'US' },
+                { ticker: 'JPM', company: 'JPMorgan Chase & Co.', sector: 'Finance', industry: 'Banking', country: 'US' },
+                { ticker: 'V', company: 'Visa Inc.', sector: 'Finance', industry: 'Payment Services', country: 'US' },
+                { ticker: 'JNJ', company: 'Johnson & Johnson', sector: 'Healthcare', industry: 'Pharmaceuticals', country: 'US' },
+                { ticker: 'WMT', company: 'Walmart Inc.', sector: 'Consumer', industry: 'Retail', country: 'US' },
+                { ticker: 'PG', company: 'Procter & Gamble Co.', sector: 'Consumer', industry: 'Consumer Goods', country: 'US' }
+            ],
+            uk: [
+                { ticker: 'SHEL', company: 'Shell plc', sector: 'Energy', industry: 'Oil & Gas', country: 'UK' },
+                { ticker: 'AZN', company: 'AstraZeneca PLC', sector: 'Healthcare', industry: 'Pharmaceuticals', country: 'UK' },
+                { ticker: 'HSBA', company: 'HSBC Holdings plc', sector: 'Finance', industry: 'Banking', country: 'UK' },
+                { ticker: 'ULVR', company: 'Unilever PLC', sector: 'Consumer', industry: 'Consumer Goods', country: 'UK' },
+                { ticker: 'BP', company: 'BP p.l.c.', sector: 'Energy', industry: 'Oil & Gas', country: 'UK' },
+                { ticker: 'GSK', company: 'GSK plc', sector: 'Healthcare', industry: 'Pharmaceuticals', country: 'UK' },
+                { ticker: 'DGE', company: 'Diageo plc', sector: 'Consumer', industry: 'Beverages', country: 'UK' },
+                { ticker: 'RIO', company: 'Rio Tinto Group', sector: 'Materials', industry: 'Mining', country: 'UK' },
+                { ticker: 'BARC', company: 'Barclays PLC', sector: 'Finance', industry: 'Banking', country: 'UK' },
+                { ticker: 'VOD', company: 'Vodafone Group Plc', sector: 'Telecom', industry: 'Communications', country: 'UK' }
+            ],
+            china: [
+                { ticker: '0700.HK', company: 'Tencent Holdings', sector: 'Technology', industry: 'Internet Services', country: 'CN' },
+                { ticker: 'BABA', company: 'Alibaba Group', sector: 'Technology', industry: 'E-commerce', country: 'CN' },
+                { ticker: '0939.HK', company: 'China Construction Bank', sector: 'Finance', industry: 'Banking', country: 'CN' },
+                { ticker: '0005.HK', company: 'HSBC Holdings', sector: 'Finance', industry: 'Banking', country: 'CN' },
+                { ticker: '2318.HK', company: 'Ping An Insurance', sector: 'Finance', industry: 'Insurance', country: 'CN' },
+                { ticker: '0883.HK', company: 'CNOOC Limited', sector: 'Energy', industry: 'Oil & Gas', country: 'CN' },
+                { ticker: '0386.HK', company: 'China Petroleum', sector: 'Energy', industry: 'Oil & Gas', country: 'CN' },
+                { ticker: '1810.HK', company: 'Xiaomi Corporation', sector: 'Technology', industry: 'Consumer Electronics', country: 'CN' },
+                { ticker: '9988.HK', company: 'Alibaba Group (HK)', sector: 'Technology', industry: 'E-commerce', country: 'CN' },
+                { ticker: '3690.HK', company: 'Meituan', sector: 'Technology', industry: 'Internet Services', country: 'CN' }
+            ]
+        };
+
+        // Sector color mapping
+        const sectorColors = {
+            'Finance': 'blue',
+            'Technology': 'indigo',
+            'Healthcare': 'red',
+            'Energy': 'green',
+            'Consumer': 'pink',
+            'Utilities': 'yellow',
+            'Telecom': 'purple',
+            'Plantation': 'orange',
+            'Materials': 'gray'
+        };
+
+        // Function to render stock list
+        function renderStocks(stocks) {
+            const stockList = document.getElementById('stockList');
+            stockList.innerHTML = stocks.map((stock, index) => {
+                const sectorColor = sectorColors[stock.sector] || 'gray';
+                
+                return `
+                    <div class="grid grid-cols-8 gap-4 px-6 py-5 hover:bg-gray-50 transition-all duration-300 cursor-pointer group slide-in" style="animation-delay: ${index * 0.03}s">
+                        <div class="col-span-1 text-gray-500 font-medium">${index + 1}</div>
+                        <div class="col-span-2 font-semibold text-midnight-900 group-hover:text-midnight-700">${stock.ticker}</div>
+                        <div class="col-span-2 text-gray-600">${stock.company}</div>
+                        <div class="col-span-1">
+                            <span class="inline-flex px-3 py-1 bg-${sectorColor}-50 text-${sectorColor}-700 rounded-full text-xs font-medium border border-${sectorColor}-200">
+                                ${stock.sector}
+                            </span>
+                        </div>
+                        <div class="col-span-1 text-gray-500 text-sm">${stock.industry}</div>
+                        <div class="col-span-1 text-center">
+                            <button class="px-3 py-1.5 bg-midnight-900 text-white rounded-lg text-xs hover:bg-midnight-800 transition-all duration-300 transform hover:scale-105">
+                                <i class="fas fa-chart-line mr-1"></i>View
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Function to switch markets
+        function switchMarket(market) {
+            // Update active tab
+            document.querySelectorAll('.market-tab').forEach(tab => {
+                if (tab.dataset.market === market) {
+                    tab.classList.add('bg-white', 'text-midnight-900', 'shadow-sm');
+                    tab.classList.remove('text-gray-600', 'hover:text-midnight-900');
+                } else {
+                    tab.classList.remove('bg-white', 'text-midnight-900', 'shadow-sm');
+                    tab.classList.add('text-gray-600', 'hover:text-midnight-900');
+                }
+            });
+
+            // Reset filters when switching markets
+            document.getElementById('sectorFilter').value = '';
+            document.getElementById('sortBy').value = 'ticker';
+
+            // Render stocks for selected market
+            renderStocks(stockData[market]);
+        }
+
+        // Search functionality
+        document.getElementById('headerSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const currentMarket = document.querySelector('.market-tab.bg-white').dataset.market;
+            const filteredStocks = stockData[currentMarket].filter(stock => 
+                stock.ticker.toLowerCase().includes(searchTerm) || 
+                stock.company.toLowerCase().includes(searchTerm)
+            );
+            renderStocks(filteredStocks);
+        });
+
+        // Sector filter
+        document.getElementById('sectorFilter').addEventListener('change', function(e) {
+            const selectedSector = e.target.value;
+            const currentMarket = document.querySelector('.market-tab.bg-white').dataset.market;
+            const filteredStocks = selectedSector 
+                ? stockData[currentMarket].filter(stock => stock.sector === selectedSector)
+                : stockData[currentMarket];
+            renderStocks(filteredStocks);
+        });
+
+        // Sort functionality
+        document.getElementById('sortBy').addEventListener('change', function(e) {
+            const sortBy = e.target.value;
+            const currentMarket = document.querySelector('.market-tab.bg-white').dataset.market;
+            let sortedStocks = [...stockData[currentMarket]];
+            
+            switch(sortBy) {
+                case 'company':
+                    sortedStocks.sort((a, b) => a.company.localeCompare(b.company));
+                    break;
+                case 'sector':
+                    sortedStocks.sort((a, b) => a.sector.localeCompare(b.sector));
+                    break;
+                default:
+                    sortedStocks.sort((a, b) => a.ticker.localeCompare(b.ticker));
+            }
+            
+            renderStocks(sortedStocks);
+        });
+
+        // Initialize with FBM 100
+        renderStocks(stockData.fbm100);
+    </script>
+</body>
+</html>

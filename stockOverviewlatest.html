@@ -37,12 +37,12 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .slide-in-right {
-            animation: slideInRight 0.6s ease-out;
+        .slide-in-left {
+            animation: slideInLeft 0.6s ease-out;
         }
 
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(30px); }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
             to { opacity: 1; transform: translateX(0); }
         }
 
@@ -144,6 +144,7 @@
         /* Scrollbar styling */
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
+            height: 6px;
         }
 
         .custom-scrollbar::-webkit-scrollbar-track {
@@ -162,24 +163,24 @@
 
         /* Chart containers enhanced */
         .chart-container {
-            min-height: 700px;
-            height: 700px;
+            min-height: 600px;
+            height: 600px;
         }
 
         .overview-container {
-            min-height: 450px;
-            height: 450px;
+            min-height: 380px;
+            height: 380px;
             overflow: auto;
         }
 
         .company-profile-container {
-            min-height: 450px;
-            height: 450px;
+            min-height: 400px;
+            height: 400px;
         }
 
         .symbol-info-container {
-            min-height: 200px;
-            height: 200px;
+            min-height: 150px;
+            height: 150px;
         }
 
         /* Navigation tabs */
@@ -244,23 +245,88 @@
             mask-composite: exclude;
         }
 
-        /* Page transitions */
-        .page-transition {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Horizontal Stock Explorer Styling */
+        .horizontal-stock-explorer {
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.98), rgba(241, 245, 249, 0.95));
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(226, 232, 240, 0.6);
         }
 
-        /* Integrated sidebar styling */
-        .integrated-sidebar {
-            background: linear-gradient(135deg, rgba(248, 250, 252, 0.98), rgba(241, 245, 249, 0.95));
+        .stock-category {
+            min-width: 160px;
+            flex-shrink: 0;
+        }
+
+        .stock-scroll-container {
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(148, 163, 184, 0.5) rgba(241, 245, 249, 0.5);
+        }
+
+        .stock-scroll-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .stock-scroll-container::-webkit-scrollbar-track {
+            background: rgba(241, 245, 249, 0.5);
+            border-radius: 3px;
+        }
+
+        .stock-scroll-container::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.5);
+            border-radius: 3px;
+        }
+
+        .stock-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(148, 163, 184, 0.8);
+        }
+
+        /* Current stock highlight */
+        .current-stock-highlight {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Full page layout */
+        .full-page-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            width: 100%;
+            max-width: none;
+        }
+
+        /* Stock Explorer Cards Enhancement */
+        .stock-explorer-card {
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(226, 232, 240, 0.6);
+            border: 1px solid rgba(226, 232, 240, 0.7);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stock-explorer-card:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Category Headers */
+        .category-header {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(99, 102, 241, 0.1));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
         }
     </style>
 </head>
 
-<body class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 font-inter text-slate-800">
+<body class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 font-inter text-slate-800 full-page-container">
     <!-- Header -->
-    <header class="fixed top-0 left-0 w-full z-30 bg-slate-900/95 backdrop-blur-xl border-b border-slate-700/50 shadow-2xl">
+    <header class="w-full z-30 bg-slate-900/95 backdrop-blur-xl border-b border-slate-700/50 shadow-2xl">
         <nav class="w-full flex items-center justify-between py-4 px-6">
             <!-- Logo Section -->
             <div class="flex items-center space-x-4">
@@ -304,30 +370,17 @@
         </nav>
     </header>
 
-    <!-- Main Content with Integrated Layout -->
-    <main class="pt-20 min-h-screen w-full">
+    <!-- Main Content -->
+    <main class="main-content">
         <div class="w-full px-6 py-6">
             <!-- Page Header with Search -->
-            <div class="flex items-center justify-between mb-6 fade-in">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between mb-6 fade-in space-y-4 lg:space-y-0">
                 <div>
-                    <h1 class="text-3xl font-bold text-slate-900 mb-2">Stock Overview</h1>
-                    <p class="text-slate-600">Comprehensive market analysis and real-time data</p>
+                    <h1 class="text-4xl font-bold text-slate-900 mb-2">Stock Overview</h1>
+                    <p class="text-slate-600 text-lg">Comprehensive market analysis and real-time data</p>
                 </div>
                 
-                <!-- Enhanced Search -->
-                <div class="search-container w-full max-w-md">
-                    <div class="relative">
-                        <div class="bg-white/90 backdrop-blur-sm border border-gray-300/50 rounded-xl px-4 py-3 flex items-center space-x-3 shadow-lg">
-                            <i class="fas fa-search text-gray-400"></i>
-                            <input id="mainSearch" type="text" placeholder="Search stocks, symbols..." 
-                                   class="bg-transparent outline-none text-slate-900 placeholder-gray-400 flex-1">
-                            <button class="text-slate-400 hover:text-slate-600 transition-colors">
-                                <i class="fas fa-sliders-h"></i>
-                            </button>
-                        </div>
-                        <div id="mainSearchResults" class="search-results hidden"></div>
-                    </div>
-                </div>
+
             </div>
 
             <!-- Stock Navigation Tabs -->
@@ -358,368 +411,300 @@
                 </div>
             </div>
 
-            <!-- Main Layout with Integrated Sidebar -->
-            <div class="grid grid-cols-12 gap-6">
-                <!-- Main Content Area -->
-                <div class="col-span-12 lg:col-span-8 space-y-6">
-                    <!-- TradingView Symbol Info Widget -->
-                    <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-gray-200/50 fade-in">
-                        <div class="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 text-white p-5">
-                            <div class="flex items-center justify-between">
-                                <h2 class="text-xl font-bold flex items-center">
-                                    <i class="fas fa-info-circle mr-3"></i>
-                                    Symbol Information
-                                </h2>
-                                <div class="flex items-center space-x-4">
-                                    <span class="text-sm bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full border border-white/30">Live Data</span>
-                                    <div class="flex items-center space-x-2 text-sm">
-                                        <i class="fas fa-sync-alt animate-spin"></i>
-                                        <span>Real-time</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- TradingView Symbol Info Widget -->
-                        <div class="tradingview-widget-container p-4 symbol-info-container">
-                            <div class="tradingview-widget-container__widget" id="tradingview_symbol_info" style="height: 100%; width: 100%;"></div>
-                        </div>
-                    </div>
-
-                    <!-- TradingView Symbol Overview Widget with Scrolling and Zoom -->
-                    <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-gray-200/50 fade-in">
-                        <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white p-5">
-                            <div class="flex items-center justify-between">
-                                <h2 class="text-xl font-bold flex items-center">
-                                    <i class="fas fa-chart-area mr-3"></i>
-                                    Interactive Chart
-                                </h2>
-                                <div class="flex items-center space-x-4">
-                                    <span class="text-sm bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full border border-white/30">Scrollable & Zoomable</span>
-                                    <div class="flex items-center space-x-2 text-sm">
-                                        <i class="fas fa-expand-arrows-alt"></i>
-                                        <span>Interactive</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Enhanced TradingView Symbol Overview Widget -->
-                        <div class="tradingview-widget-container p-4 overview-container custom-scrollbar">
-                            <div class="tradingview-widget-container__widget" id="tradingview_overview" style="height: 100%; width: 100%;"></div>
-                        </div>
-                    </div>
-
-                    <!-- Enhanced Metrics Grid -->
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 slide-up">
-                        <div class="metric-card bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl p-5 shadow-xl border border-blue-400/20">
-                            <div class="flex items-center justify-between mb-2">
-                                <p class="text-sm opacity-80">Market Cap</p>
-                                <i class="fas fa-building text-lg opacity-60"></i>
-                            </div>
-                            <p class="text-2xl font-bold" id="marketCap">$2.96T</p>
-                        </div>
-                        <div class="metric-card bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl p-5 shadow-xl border border-green-400/20">
-                            <div class="flex items-center justify-between mb-2">
-                                <p class="text-sm opacity-80">P/E Ratio</p>
-                                <i class="fas fa-chart-bar text-lg opacity-60"></i>
-                            </div>
-                            <p class="text-2xl font-bold" id="peRatio">29.43</p>
-                        </div>
-                        <div class="metric-card bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-2xl p-5 shadow-xl border border-purple-400/20">
-                            <div class="flex items-center justify-between mb-2">
-                                <p class="text-sm opacity-80">Volume</p>
-                                <i class="fas fa-chart-area text-lg opacity-60"></i>
-                            </div>
-                            <p class="text-2xl font-bold" id="volume">45.2M</p>
-                        </div>
-                    </div>
-
-                    <!-- Enhanced Main Chart -->
-                    <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-gray-200/50 fade-in">
-                        <div class="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white p-5">
-                            <div class="flex items-center justify-between">
-                                <h2 class="text-xl font-bold flex items-center">
-                                    <i class="fas fa-chart-line mr-3"></i>
-                                    Advanced Price Chart
-                                </h2>
-                                <div class="flex items-center space-x-4">
-                                    <span class="text-sm bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full border border-white/30">Real-time</span>
-                                    <div class="flex items-center space-x-2 text-sm">
-                                        <i class="fas fa-clock"></i>
-                                        <span id="chartLastUpdate">Live</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Enhanced Chart Container -->
-                        <div class="tradingview-widget-container p-4 chart-container">
-                            <div id="tradingview_chart" class="w-full h-full"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Integrated Sidebar (Right Panel) -->
-                <div class="col-span-12 lg:col-span-4 slide-in-right">
-                    <div class="integrated-sidebar rounded-2xl shadow-2xl h-fit sticky top-24">
-                        <!-- Sidebar Header -->
-                        <div class="p-6 border-b border-gray-200/50">
-                            <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center">
-                                <i class="fas fa-search mr-3 text-blue-600"></i>
-                                Stock Explorer
-                            </h2>
-                            
+            <!-- Streamlined Stock Explorer -->
+            <div class="horizontal-stock-explorer rounded-xl shadow-xl mb-6 slide-in-left">
+                <div class="p-4 border-b border-gray-200/50">
+                    <div class="flex items-center justify-between mb-3">
+                        <h2 class="text-lg font-bold text-slate-900 flex items-center">
+                            <i class="fas fa-chart-bar mr-2 text-blue-600"></i>
+                            Stock Explorer
+                        </h2>
+                        <div class="flex items-center space-x-3">
                             <!-- Current Stock Display -->
-                            <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 mb-4 border border-blue-200/50">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <div class="font-bold text-slate-900" id="currentStockSymbol">AAPL</div>
-                                        <div class="text-sm text-slate-600" id="currentStockName">Apple Inc.</div>
-                                    </div>
-                                    <div class="text-right">
-                                        <div class="font-bold text-green-600" id="currentStockChange">+0.81%</div>
-                                        <div class="text-sm text-slate-600" id="currentStockPrice">$189.34</div>
-                                    </div>
+                            <div class="current-stock-highlight rounded-lg px-3 py-1 flex items-center space-x-2">
+                                <div class="text-center">
+                                    <div class="text-xs font-medium opacity-90">Current</div>
+                                    <div class="font-bold text-sm" id="currentStockSymbol">AAPL</div>
                                 </div>
                             </div>
                             
-                            <!-- Quick Stock Search -->
-                            <div class="relative">
-                                <div class="bg-gray-50/80 backdrop-blur-sm border border-gray-200/50 rounded-xl px-4 py-3 flex items-center space-x-3 shadow-sm">
-                                    <i class="fas fa-search text-gray-400"></i>
-                                    <input id="sidebarSearch" type="text" placeholder="Find another stock..." 
-                                           class="bg-transparent outline-none text-slate-900 placeholder-gray-400 flex-1">
+                            <!-- Compact Search -->
+                            <div class="search-container">
+                                <div class="relative">
+                                    <div class="bg-gray-50/80 backdrop-blur-sm border border-gray-200/50 rounded-lg px-3 py-2 flex items-center space-x-2 shadow-sm min-w-[200px]">
+                                        <i class="fas fa-search text-gray-400 text-sm"></i>
+                                        <input id="explorerSearch" type="text" placeholder="Find stocks..." 
+                                               class="bg-transparent outline-none text-slate-900 placeholder-gray-400 flex-1 text-sm">
+                                    </div>
+                                    <div id="explorerSearchResults" class="search-results hidden"></div>
                                 </div>
-                                <div id="sidebarSearchResults" class="hidden absolute mt-2 w-full bg-white/95 backdrop-blur-xl rounded-xl shadow-xl border border-gray-200/50 z-50 max-h-48 overflow-y-auto custom-scrollbar"></div>
                             </div>
                         </div>
-
-                        <!-- Stock Categories -->
-                        <div class="max-h-96 overflow-y-auto custom-scrollbar">
-                            <!-- Top Gainers -->
-                            <div class="p-6 border-b border-gray-200/50">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h3 class="font-bold text-slate-900 flex items-center">
-                                        <span class="text-lg mr-2">🚀</span>
-                                        Top Gainers
-                                    </h3>
-                                    <span class="text-xs text-green-700 bg-green-100/80 backdrop-blur-sm px-3 py-1 rounded-full border border-green-200 status-indicator">Today</span>
+                    </div>
+                    
+                    <!-- Horizontal Stock List -->
+                    <div class="stock-scroll-container">
+                        <div class="flex space-x-2 pb-2">
+                            <!-- Stock Cards -->
+                            <div class="stock-item stock-explorer-card flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-300 min-w-[150px]"
+                                 onclick="selectStock('NASDAQ:AAPL')">
+                                <div class="w-10 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                                    <span class="text-white text-xs font-bold">AAPL</span>
                                 </div>
-                                <div class="space-y-3" id="topGainers">
-                                    <div class="stock-item flex items-center justify-between p-4 bg-green-50/80 backdrop-blur-sm border border-green-200/50 rounded-xl cursor-pointer hover:bg-green-100/80 transition-all duration-300"
-                                         onclick="selectStock('MYX:BIMB')">
-                                        <div>
-                                            <div class="font-bold text-slate-900">BIMB</div>
-                                            <div class="text-xs text-slate-600">BIMB Holdings</div>
-                                        </div>
-                                        <div class="text-right">
-                                            <div class="font-bold text-green-600">+2.08%</div>
-                                            <div class="text-xs text-slate-600">RM2.45</div>
-                                        </div>
-                                    </div>
-                                    <div class="stock-item flex items-center justify-between p-4 bg-green-50/80 backdrop-blur-sm border border-green-200/50 rounded-xl cursor-pointer hover:bg-green-100/80 transition-all duration-300"
-                                         onclick="selectStock('MYX:MAYBANK')">
-                                        <div>
-                                            <div class="font-bold text-slate-900">MAYBANK</div>
-                                            <div class="text-xs text-slate-600">Maybank</div>
-                                        </div>
-                                        <div class="text-right">
-                                            <div class="font-bold text-green-600">+1.8%</div>
-                                            <div class="text-xs text-slate-600">RM9.85</div>
-                                        </div>
-                                    </div>
-                                    <div class="stock-item flex items-center justify-between p-4 bg-green-50/80 backdrop-blur-sm border border-green-200/50 rounded-xl cursor-pointer hover:bg-green-100/80 transition-all duration-300"
-                                         onclick="selectStock('MYX:TENAGA')">
-                                        <div>
-                                            <div class="font-bold text-slate-900">TENAGA</div>
-                                            <div class="text-xs text-slate-600">Tenaga Nasional</div>
-                                        </div>
-                                        <div class="text-right">
-                                            <div class="font-bold text-green-600">+1.5%</div>
-                                            <div class="text-xs text-slate-600">RM13.24</div>
-                                        </div>
-                                    </div>
+                                <div>
+                                    <div class="text-xs text-slate-600">APPLE Inc</div>
                                 </div>
                             </div>
-
-                            <!-- AI Recommendations -->
-                            <div class="p-6 border-b border-gray-200/50">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h3 class="font-bold text-slate-900 flex items-center">
-                                        <span class="text-lg mr-2">🤖</span>
-                                        AI Picks
-                                    </h3>
-                                    <span class="text-xs text-blue-700 bg-blue-100/80 backdrop-blur-sm px-3 py-1 rounded-full border border-blue-200 status-indicator">High Confidence</span>
+                            <div class="stock-item stock-explorer-card flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-300 min-w-[150px]"
+                                 onclick="selectStock('NASDAQ:AAPL')">
+                                <div class="w-10 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                                    <span class="text-white text-xs font-bold">AAPL</span>
                                 </div>
-                                <div class="space-y-3" id="aiRecommendations">
-                                    <div class="stock-item flex items-center justify-between p-4 bg-blue-50/80 backdrop-blur-sm border border-blue-200/50 rounded-xl cursor-pointer hover:bg-blue-100/80 transition-all duration-300"
-                                         onclick="selectStock('NASDAQ:AAPL')">
-                                        <div>
-                                            <div class="font-bold text-slate-900">AAPL</div>
-                                            <div class="text-xs text-slate-600">Apple Inc.</div>
-                                            <div class="text-xs text-blue-600">95% confidence</div>
-                                        </div>
-                                        <div class="text-right">
-                                            <div class="font-bold text-cyan-600">BUY</div>
-                                            <div class="text-xs text-slate-600">$189.34</div>
-                                        </div>
-                                    </div>
-                                    <div class="stock-item flex items-center justify-between p-4 bg-blue-50/80 backdrop-blur-sm border border-blue-200/50 rounded-xl cursor-pointer hover:bg-blue-100/80 transition-all duration-300"
-                                         onclick="selectStock('NASDAQ:MSFT')">
-                                        <div>
-                                            <div class="font-bold text-slate-900">MSFT</div>
-                                            <div class="text-xs text-slate-600">Microsoft</div>
-                                            <div class="text-xs text-blue-600">92% confidence</div>
-                                        </div>
-                                        <div class="text-right">
-                                            <div class="font-bold text-cyan-600">BUY</div>
-                                            <div class="text-xs text-slate-600">$425.67</div>
-                                        </div>
-                                    </div>
-                                    <div class="stock-item flex items-center justify-between p-4 bg-blue-50/80 backdrop-blur-sm border border-blue-200/50 rounded-xl cursor-pointer hover:bg-blue-100/80 transition-all duration-300"
-                                         onclick="selectStock('MYX:CIMB')">
-                                        <div>
-                                            <div class="font-bold text-slate-900">CIMB</div>
-                                            <div class="text-xs text-slate-600">CIMB Group</div>
-                                            <div class="text-xs text-blue-600">89% confidence</div>
-                                        </div>
-                                        <div class="text-right">
-                                            <div class="font-bold text-cyan-600">BUY</div>
-                                            <div class="text-xs text-slate-600">RM6.45</div>
-                                        </div>
-                                    </div>
+                                <div>
+                                    <div class="text-xs text-slate-600">APPLE Inc</div>
                                 </div>
+    
+                            </div>
+                            <div class="stock-item stock-explorer-card flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-300 min-w-[150px]"
+                                 onclick="selectStock('NASDAQ:AAPL')">
+                                <div class="w-10 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                                    <span class="text-white text-xs font-bold">AAPL</span>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-600">APPLE Inc</div>
+                                </div>
+    
+                            </div>
+                            <div class="stock-item stock-explorer-card flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-300 min-w-[150px]"
+                                 onclick="selectStock('NASDAQ:AAPL')">
+                                <div class="w-10 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                                    <span class="text-white text-xs font-bold">AAPL</span>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-600">APPLE Inc</div>
+                                </div>
+    
                             </div>
 
-                            <!-- Market Movers -->
-                            <div class="p-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h3 class="font-bold text-slate-900 flex items-center">
-                                        <span class="text-lg mr-2">📈</span>
-                                        Market Movers
-                                    </h3>
-                                    <span class="text-xs text-amber-700 bg-amber-100/80 backdrop-blur-sm px-3 py-1 rounded-full border border-amber-200 status-indicator">Volume</span>
-                                </div>
-                                <div class="space-y-3" id="marketMovers">
-                                    <div class="stock-item flex items-center justify-between p-4 bg-amber-50/80 backdrop-blur-sm border border-amber-200/50 rounded-xl cursor-pointer hover:bg-amber-100/80 transition-all duration-300"
-                                         onclick="selectStock('NASDAQ:GOOGL')">
-                                        <div>
-                                            <div class="font-bold text-slate-900">GOOGL</div>
-                                            <div class="text-xs text-slate-600">Alphabet Inc.</div>
-                                        </div>
-                                        <div class="text-right">
-                                            <div class="font-bold text-amber-600">+1.4%</div>
-                                            <div class="text-xs text-slate-600">$142.65</div>
-                                        </div>
-                                    </div>
-                                    <div class="stock-item flex items-center justify-between p-4 bg-amber-50/80 backdrop-blur-sm border border-amber-200/50 rounded-xl cursor-pointer hover:bg-amber-100/80 transition-all duration-300"
-                                         onclick="selectStock('NASDAQ:TSLA')">
-                                        <div>
-                                            <div class="font-bold text-slate-900">TSLA</div>
-                                            <div class="text-xs text-slate-600">Tesla Inc.</div>
-                                        </div>
-                                        <div class="text-right">
-                                            <div class="font-bold text-amber-600">+2.1%</div>
-                                            <div class="text-xs text-slate-600">$198.91</div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <!-- Show More Button -->
+                            <div class="flex items-center justify-center min-w-[100px]">
+                                <button class="bg-gradient-to-r from-slate-100 to-slate-200 hover:from-slate-200 hover:to-slate-300 text-slate-700 px-4 py-3 rounded-lg font-medium text-sm transition-all duration-300 border border-slate-300/50 hover:border-slate-400/50">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    More
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Analysis Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 mt-6">
-                <!-- Technical Analysis -->
-                <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-gray-200/50 fade-in">
-                    <div class="bg-gradient-to-r from-green-600 to-teal-600 text-white p-5">
+            <!-- TradingView Symbol Info Widget -->
+            <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-gray-200/50 fade-in mb-6">
+                <div class="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 text-white p-5">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-bold flex items-center">
+                            <i class="fas fa-info-circle mr-3"></i>
+                            Symbol Information
+                        </h2>
+                        <div class="flex items-center space-x-4">
+                            <span class="text-sm bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full border border-white/30">Live Data</span>
+                            <div class="flex items-center space-x-2 text-sm">
+                                <i class="fas fa-sync-alt animate-spin"></i>
+                                <span>Real-time</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- TradingView Symbol Info Widget -->
+                <div class="tradingview-widget-container p-4 symbol-info-container">
+                    <div class="tradingview-widget-container__widget" id="tradingview_symbol_info" style="height: 100%; width: 100%;"></div>
+                </div>
+            </div>
+
+            <!-- TradingView Symbol Overview Widget with Scrolling and Zoom -->
+            <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-gray-200/50 fade-in mb-6">
+                <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white p-5">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-bold flex items-center">
+                            <i class="fas fa-chart-area mr-3"></i>
+                            Interactive Chart
+                        </h2>
+                        <div class="flex items-center space-x-4">
+                            <span class="text-sm bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full border border-white/30">Scrollable & Zoomable</span>
+                            <div class="flex items-center space-x-2 text-sm">
+                                <i class="fas fa-expand-arrows-alt"></i>
+                                <span>Interactive</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Enhanced TradingView Symbol Overview Widget -->
+                <div class="tradingview-widget-container p-4 overview-container custom-scrollbar">
+                    <div class="tradingview-widget-container__widget" id="tradingview_overview" style="height: 100%; width: 100%;"></div>
+                </div>
+            </div>
+
+            <!-- Enhanced Metrics Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6 slide-up">
+                <div class="metric-card bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-4 shadow-lg border border-blue-400/20">
+                    <div class="flex items-center justify-between mb-1">
+                        <p class="text-xs opacity-80">Market Cap</p>
+                        <i class="fas fa-building text-sm opacity-60"></i>
+                    </div>
+                    <p class="text-lg font-bold" id="marketCap">$2.96T</p>
+                </div>
+                <div class="metric-card bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl p-4 shadow-lg border border-green-400/20">
+                    <div class="flex items-center justify-between mb-1">
+                        <p class="text-xs opacity-80">P/E Ratio</p>
+                        <i class="fas fa-chart-bar text-sm opacity-60"></i>
+                    </div>
+                    <p class="text-lg font-bold" id="peRatio">29.43</p>
+                </div>
+                <div class="metric-card bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl p-4 shadow-lg border border-purple-400/20">
+                    <div class="flex items-center justify-between mb-1">
+                        <p class="text-xs opacity-80">Dividend Yield</p>
+                        <i class="fas fa-coins text-sm opacity-60"></i>
+                    </div>
+                    <p class="text-lg font-bold" id="dividendYield">0.47%</p>
+                </div>
+                <div class="metric-card bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-xl p-4 shadow-lg border border-orange-400/20">
+                    <div class="flex items-center justify-between mb-1">
+                        <p class="text-xs opacity-80">52W High</p>
+                        <i class="fas fa-arrow-up text-sm opacity-60"></i>
+                    </div>
+                    <p class="text-lg font-bold" id="weekHigh">$199.62</p>
+                </div>
+                <div class="metric-card bg-gradient-to-br from-pink-500 to-pink-600 text-white rounded-xl p-4 shadow-lg border border-pink-400/20">
+                    <div class="flex items-center justify-between mb-1">
+                        <p class="text-xs opacity-80">52W Low</p>
+                        <i class="fas fa-arrow-down text-sm opacity-60"></i>
+                    </div>
+                    <p class="text-lg font-bold" id="weekLow">$164.08</p>
+                </div>
+                <div class="metric-card bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-xl p-4 shadow-lg border border-indigo-400/20">
+                    <div class="flex items-center justify-between mb-1">
+                        <p class="text-xs opacity-80">Volume</p>
+                        <i class="fas fa-chart-area text-sm opacity-60"></i>
+                    </div>
+                    <p class="text-lg font-bold" id="volume">45.2M</p>
+                </div>
+            </div>
+
+            <!-- Enhanced Main Chart -->
+            <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-gray-200/50 fade-in mb-6">
+                <div class="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white p-5">
+                    <div class="flex items-center justify-between">
                         <h2 class="text-xl font-bold flex items-center">
                             <i class="fas fa-chart-line mr-3"></i>
+                            Advanced Price Chart
+                        </h2>
+                        <div class="flex items-center space-x-4">
+                            <span class="text-sm bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full border border-white/30">Real-time</span>
+                            <div class="flex items-center space-x-2 text-sm">
+                                <i class="fas fa-clock"></i>
+                                <span id="chartLastUpdate">Live</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Enhanced Chart Container -->
+                <div class="tradingview-widget-container p-4 chart-container">
+                    <div id="tradingview_chart" class="w-full h-full"></div>
+                </div>
+            </div>
+
+            <!-- Analysis Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+                <!-- Technical Analysis -->
+                <div class="bg-white/95 backdrop-blur-xl rounded-xl shadow-xl overflow-hidden border border-gray-200/50 fade-in">
+                    <div class="bg-gradient-to-r from-green-600 to-teal-600 text-white p-4">
+                        <h2 class="text-lg font-bold flex items-center">
+                            <i class="fas fa-chart-line mr-2"></i>
                             Technical Analysis
-                            <span class="ml-auto text-sm bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full border border-white/30">Live Indicators</span>
+                            <span class="ml-auto text-xs bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full border border-white/30">Live Indicators</span>
                         </h2>
                     </div>
-                    <div class="tradingview-widget-container p-4" style="height: 450px; width: 100%;">
+                    <div class="tradingview-widget-container p-3" style="height: 400px; width: 100%;">
                         <div id="tradingview_technical" style="height: 100%; width: 100%;"></div>
                     </div>
                 </div>
 
                 <!-- TradingView Company Profile -->
-                <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-gray-200/50 fade-in">
-                    <div class="bg-gradient-to-r from-orange-600 to-pink-600 text-white p-5">
-                        <h2 class="text-xl font-bold flex items-center">
-                            <i class="fas fa-building mr-3"></i>
+                <div class="bg-white/95 backdrop-blur-xl rounded-xl shadow-xl overflow-hidden border border-gray-200/50 fade-in">
+                    <div class="bg-gradient-to-r from-orange-600 to-pink-600 text-white p-4">
+                        <h2 class="text-lg font-bold flex items-center">
+                            <i class="fas fa-building mr-2"></i>
                             Company Profile
-                            <span class="ml-auto text-sm bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full border border-white/30">TradingView Data</span>
+                            <span class="ml-auto text-xs bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full border border-white/30">TradingView Data</span>
                         </h2>
                     </div>
                     <!-- TradingView Company Profile Widget -->
-                    <div class="tradingview-widget-container p-4 company-profile-container">
+                    <div class="tradingview-widget-container p-3 company-profile-container">
                         <div id="tradingview_profile" style="height: 100%; width: 100%;"></div>
                     </div>
                 </div>
             </div>
 
             <!-- Enhanced AI Insights Section -->
-            <div class="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 rounded-2xl shadow-2xl p-6 text-white border border-purple-400/20 slide-up">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold flex items-center">
-                        <i class="fas fa-brain mr-3 floating"></i>
+            <div class="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 rounded-xl shadow-xl p-5 text-white border border-purple-400/20 slide-up">
+                <div class="flex items-center justify-between mb-5">
+                    <h2 class="text-xl font-bold flex items-center">
+                        <i class="fas fa-brain mr-2 floating"></i>
                         AI Market Insights
                     </h2>
-                    <div class="flex items-center space-x-3">
-                        <span class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-semibold border border-white/30">
-                            <i class="fas fa-sync-alt mr-2 animate-spin"></i>
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold border border-white/30">
+                            <i class="fas fa-sync-alt mr-1 animate-spin"></i>
                             Real-time Analysis
                         </span>
-                        <span class="bg-green-400/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-semibold border border-green-300/30">
+                        <span class="bg-green-400/20 backdrop-blur-sm px-2 py-1 rounded-full text-xs font-semibold border border-green-300/30">
                             <i class="fas fa-check-circle mr-1"></i>
                             High Accuracy
                         </span>
                     </div>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20 hover:bg-white/20 transition-all duration-300">
-                        <h3 class="font-semibold mb-3 flex items-center">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20 hover:bg-white/20 transition-all duration-300">
+                        <h3 class="font-semibold mb-2 flex items-center">
                             <i class="fas fa-chart-line mr-2 text-green-300"></i>
                             Trend Analysis
                         </h3>
-                        <p class="text-sm opacity-90 mb-4">Strong upward momentum detected. Price action suggests bullish continuation pattern forming with high confidence based on technical indicators.</p>
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="text-2xl font-bold text-green-300">↑ BULLISH</div>
+                        <p class="text-xs opacity-90 mb-3">Strong upward momentum detected. Price action suggests bullish continuation pattern forming with high confidence based on technical indicators.</p>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="text-lg font-bold text-green-300">↑ BULLISH</div>
                             <div class="text-xs bg-green-300/20 px-2 py-1 rounded-full border border-green-300/30">87% confidence</div>
                         </div>
                         <div class="text-xs text-green-200">Next support: $185.50</div>
                     </div>
                     
-                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20 hover:bg-white/20 transition-all duration-300">
-                        <h3 class="font-semibold mb-3 flex items-center">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20 hover:bg-white/20 transition-all duration-300">
+                        <h3 class="font-semibold mb-2 flex items-center">
                             <i class="fas fa-shield-alt mr-2 text-yellow-300"></i>
                             Risk Assessment
                         </h3>
-                        <p class="text-sm opacity-90 mb-4">Medium risk level with strong fundamentals. Support levels holding with institutional backing and increasing retail interest.</p>
-                        <div class="mb-3">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm">Risk Level</span>
-                                <span class="font-bold">42%</span>
+                        <p class="text-xs opacity-90 mb-3">Medium risk level with strong fundamentals. Support levels holding with institutional backing and increasing retail interest.</p>
+                        <div class="mb-2">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs">Risk Level</span>
+                                <span class="font-bold text-sm">42%</span>
                             </div>
-                            <div class="w-full bg-white/20 rounded-full h-2">
-                                <div class="bg-yellow-300 h-2 rounded-full transition-all duration-1000" style="width: 42%"></div>
+                            <div class="w-full bg-white/20 rounded-full h-1.5">
+                                <div class="bg-yellow-300 h-1.5 rounded-full transition-all duration-1000" style="width: 42%"></div>
                             </div>
                         </div>
                         <div class="text-xs text-yellow-200">VaR (1-day): -2.3%</div>
                     </div>
                     
-                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20 hover:bg-white/20 transition-all duration-300">
-                        <h3 class="font-semibold mb-3 flex items-center">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20 hover:bg-white/20 transition-all duration-300">
+                        <h3 class="font-semibold mb-2 flex items-center">
                             <i class="fas fa-bullseye mr-2 text-blue-300"></i>
                             Price Target
                         </h3>
-                        <p class="text-sm opacity-90 mb-4">AI prediction based on advanced technical analysis, market sentiment, options flow, and historical patterns.</p>
-                        <div class="mb-3">
-                            <div class="text-2xl font-bold mb-1" id="aiTarget">$205.47</div>
-                            <div class="text-sm text-green-300 mb-2" id="aiPotential">+8.5% potential upside</div>
+                        <p class="text-xs opacity-90 mb-3">AI prediction based on advanced technical analysis, market sentiment, options flow, and historical patterns.</p>
+                        <div class="mb-2">
+                            <div class="text-lg font-bold mb-1" id="aiTarget">$205.47</div>
+                            <div class="text-xs text-green-300 mb-1" id="aiPotential">+8.5% potential upside</div>
                             <div class="text-xs bg-blue-300/20 px-2 py-1 rounded-full inline-block border border-blue-300/30">12-month target</div>
                         </div>
                         <div class="text-xs text-blue-200">Probability: 73%</div>
@@ -743,6 +728,9 @@
                 change: '+0.81%',
                 marketCap: '$2.96T',
                 peRatio: '29.43',
+                dividendYield: '0.47%',
+                weekHigh: '$199.62',
+                weekLow: '$164.08',
                 volume: '45.2M',
                 aiTarget: '$205.47',
                 aiPotential: '+8.5% potential upside'
@@ -754,6 +742,9 @@
                 change: '+1.22%',
                 marketCap: '$3.16T',
                 peRatio: '35.21',
+                dividendYield: '0.68%',
+                weekHigh: '$448.87',
+                weekLow: '$362.90',
                 volume: '22.8M',
                 aiTarget: '$465.00',
                 aiPotential: '+9.2% potential upside'
@@ -765,6 +756,9 @@
                 change: '+1.41%',
                 marketCap: '$1.81T',
                 peRatio: '25.84',
+                dividendYield: '0.00%',
+                weekHigh: '$153.78',
+                weekLow: '$121.46',
                 volume: '18.5M',
                 aiTarget: '$158.90',
                 aiPotential: '+11.4% potential upside'
@@ -776,9 +770,68 @@
                 change: '+2.10%',
                 marketCap: '$633.2B',
                 peRatio: '65.12',
+                dividendYield: '0.00%',
+                weekHigh: '$299.29',
+                weekLow: '$152.37',
                 volume: '89.4M',
                 aiTarget: '$235.00',
                 aiPotential: '+18.1% potential upside'
+            },
+            'NASDAQ:NVDA': {
+                name: 'NVIDIA Corporation',
+                symbol: 'NVDA',
+                price: '$891.25',
+                change: '+3.20%',
+                marketCap: '$2.19T',
+                peRatio: '72.45',
+                dividendYield: '0.03%',
+                weekHigh: '$950.02',
+                weekLow: '$394.78',
+                volume: '67.3M',
+                aiTarget: '$975.00',
+                aiPotential: '+9.4% potential upside'
+            },
+            'NASDAQ:META': {
+                name: 'Meta Platforms Inc.',
+                symbol: 'META',
+                price: '$496.73',
+                change: '+0.90%',
+                marketCap: '$1.26T',
+                peRatio: '25.67',
+                dividendYield: '0.00%',
+                weekHigh: '$542.81',
+                weekLow: '$279.49',
+                volume: '23.4M',
+                aiTarget: '$520.00',
+                aiPotential: '+4.7% potential upside'
+            },
+            'NASDAQ:AMZN': {
+                name: 'Amazon.com Inc.',
+                symbol: 'AMZN',
+                price: '$185.92',
+                change: '+1.10%',
+                marketCap: '$1.94T',
+                peRatio: '43.21',
+                dividendYield: '0.00%',
+                weekHigh: '$201.20',
+                weekLow: '$139.52',
+                volume: '34.2M',
+                aiTarget: '$200.00',
+                aiPotential: '+7.6% potential upside'
+            },
+            'NASDAQ:NFLX': {
+                name: 'Netflix Inc.',
+                symbol: 'NFLX',
+                price: '$697.88',
+                change: '+2.40%',
+                marketCap: '$301.2B',
+                peRatio: '42.83',
+                dividendYield: '0.00%',
+                weekHigh: '$720.95',
+                weekLow: '$364.55',
+                volume: '4.8M',
+                aiTarget: '$750.00',
+                aiPotential: '+7.5% potential upside'
             },
             'MYX:MAYBANK': {
                 name: 'Malayan Banking Berhad',
@@ -787,6 +840,9 @@
                 change: '+1.76%',
                 marketCap: 'RM183.5B',
                 peRatio: '13.21',
+                dividendYield: '6.1%',
+                weekHigh: 'RM10.24',
+                weekLow: 'RM8.45',
                 volume: '4.2M',
                 aiTarget: 'RM10.50',
                 aiPotential: '+6.6% potential upside'
@@ -798,6 +854,9 @@
                 change: '+2.08%',
                 marketCap: 'RM4.52B',
                 peRatio: '12.54',
+                dividendYield: '3.2%',
+                weekHigh: 'RM2.65',
+                weekLow: 'RM1.85',
                 volume: '1.24M',
                 aiTarget: 'RM2.68',
                 aiPotential: '+9.4% potential upside'
@@ -809,6 +868,9 @@
                 change: '+1.89%',
                 marketCap: 'RM62.4B',
                 peRatio: '11.87',
+                dividendYield: '4.8%',
+                weekHigh: 'RM6.85',
+                weekLow: 'RM5.25',
                 volume: '2.1M',
                 aiTarget: 'RM7.20',
                 aiPotential: '+11.6% potential upside'
@@ -820,6 +882,9 @@
                 change: '+1.53%',
                 marketCap: 'RM61.8B',
                 peRatio: '14.21',
+                dividendYield: '4.2%',
+                weekHigh: 'RM14.50',
+                weekLow: 'RM11.20',
                 volume: '3.1M',
                 aiTarget: 'RM14.80',
                 aiPotential: '+11.8% potential upside'
@@ -841,7 +906,6 @@
             const data = stockData[symbol];
             if (data) {
                 document.getElementById('currentStockSymbol').textContent = data.symbol;
-                document.getElementById('currentStockName').textContent = data.name;
                 document.getElementById('currentStockChange').textContent = data.change;
                 document.getElementById('currentStockPrice').textContent = data.price;
             }
@@ -854,6 +918,9 @@
                 // Metrics
                 document.getElementById('marketCap').textContent = data.marketCap;
                 document.getElementById('peRatio').textContent = data.peRatio;
+                document.getElementById('dividendYield').textContent = data.dividendYield;
+                document.getElementById('weekHigh').textContent = data.weekHigh;
+                document.getElementById('weekLow').textContent = data.weekLow;
                 document.getElementById('volume').textContent = data.volume;
                 
                 // AI insights
@@ -1141,14 +1208,18 @@
         // Enhanced search functionality for both search bars
         const mainSearch = document.getElementById('mainSearch');
         const mainSearchResults = document.getElementById('mainSearchResults');
-        const sidebarSearch = document.getElementById('sidebarSearch');
-        const sidebarSearchResults = document.getElementById('sidebarSearchResults');
+        const explorerSearch = document.getElementById('explorerSearch');
+        const explorerSearchResults = document.getElementById('explorerSearchResults');
 
         const stockDatabase = [
             { symbol: 'NASDAQ:AAPL', name: 'Apple Inc.' },
             { symbol: 'NASDAQ:MSFT', name: 'Microsoft Corporation' },
             { symbol: 'NASDAQ:GOOGL', name: 'Alphabet Inc.' },
             { symbol: 'NASDAQ:TSLA', name: 'Tesla Inc.' },
+            { symbol: 'NASDAQ:NVDA', name: 'NVIDIA Corporation' },
+            { symbol: 'NASDAQ:META', name: 'Meta Platforms Inc.' },
+            { symbol: 'NASDAQ:AMZN', name: 'Amazon.com Inc.' },
+            { symbol: 'NASDAQ:NFLX', name: 'Netflix Inc.' },
             { symbol: 'MYX:BIMB', name: 'BIMB Holdings Berhad' },
             { symbol: 'MYX:MAYBANK', name: 'Malayan Banking Berhad' },
             { symbol: 'MYX:CIMB', name: 'CIMB Group Holdings' },
@@ -1195,7 +1266,7 @@
 
         // Setup search for both search bars
         setupSearch(mainSearch, mainSearchResults);
-        setupSearch(sidebarSearch, sidebarSearchResults);
+        setupSearch(explorerSearch, explorerSearchResults);
 
         // Initialize on page load
         window.addEventListener('load', () => {
@@ -1225,7 +1296,7 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 mainSearchResults.classList.add('hidden');
-                sidebarSearchResults.classList.add('hidden');
+                explorerSearchResults.classList.add('hidden');
             }
             if (e.ctrlKey && e.key === 'k') {
                 e.preventDefault();
@@ -1238,8 +1309,8 @@
             if (!mainSearch.contains(e.target) && !mainSearchResults.contains(e.target)) {
                 mainSearchResults.classList.add('hidden');
             }
-            if (!sidebarSearch.contains(e.target) && !sidebarSearchResults.contains(e.target)) {
-                sidebarSearchResults.classList.add('hidden');
+            if (!explorerSearch.contains(e.target) && !explorerSearchResults.contains(e.target)) {
+                explorerSearchResults.classList.add('hidden');
             }
         });
     </script>
